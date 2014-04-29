@@ -1,0 +1,6 @@
+nexis/Temp
+nexis/obj
+nexis/library
+*.csproj
+*.unityproj
+*.sln
