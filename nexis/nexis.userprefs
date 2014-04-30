@@ -1,12 +1,14 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
   <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/Enemy.js">
     <Files>
-      <File FileName="Assets/Scripts/PlayerInput.js" Line="26" Column="3" />
-      <File FileName="Assets/Scripts/Enemy.js" Line="78" Column="4" />
-      <File FileName="Assets/Scripts/Unit.js" Line="109" Column="61" />
+      <File FileName="Assets/Scripts/PlayerInput.js" Line="29" Column="13" />
+      <File FileName="Assets/Scripts/Enemy.js" Line="39" Column="13" />
+      <File FileName="Assets/Scripts/Unit.js" Line="73" Column="31" />
       <File FileName="Assets/Scripts/EnemyUnitManager.js" Line="48" Column="1" />
-      <File FileName="Assets/Scripts/PlayerUnitManager.js" Line="65" Column="2" />
+      <File FileName="Assets/Scripts/PlayerUnitManager.js" Line="30" Column="3" />
+      <File FileName="Assets/Scripts/Laser.js" Line="38" Column="20" />
+      <File FileName="Assets/Scripts/GameStateManager.js" Line="3" Column="56" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

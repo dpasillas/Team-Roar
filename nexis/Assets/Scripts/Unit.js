@@ -70,7 +70,7 @@ function Update () {
 	}
 	
 	if (health <= 0)
-		Destroy(this.gameObject, 0.5f);
+		Destroy(this.gameObject, 3.0f);
 }
 
 function CanMove() {

@@ -19,7 +19,7 @@ function Start () {
 	isRunning = false;
 	
 	spawnPoints = new Array();
-	var base = Vector3(5, 0, 10);
+	var base = Vector3(5, 0, 35);
 	
 	for (var i = 0; i < enemies.ActiveCount(); ++i) {
 		var x : int = Mathf.FloorToInt(Random.Range(0.0, 5.0));
@@ -36,10 +36,19 @@ function Start () {
 function Update () {
 	if (!isRunning) return;
 	
+	if (gsm.GetState() != GameState.EnemyTurn) return;
+	
 	if (unitsLeft <= 0) {
 		isRunning = false;
 		gsm.ChangeState(GameState.PlayerTurn);
 		return;
+	}
+	
+	if (gsm.GetState() == GameState.EnemyTurn) {
+		if (pum.GameOver()) {
+			gsm.ChangeState(GameState.GameOver);
+			return;
+		}
 	}
 	
 	var curr : Unit = enemies.CurrentUnit();
@@ -55,7 +64,22 @@ function Update () {
 function StartNextUnit () {
 	var curr : Unit;
 	curr = enemies.NextUnit();
-	curr.MoveTo(curr.transform.position + Vector3(3, 0, 0));
+	var rTarget : Unit = pum.RandomUnit();
+	if (!rTarget) return;
+
+	var newP : Vector2 = Random.insideUnitCircle * 5;
+	newP = Vector2(curr.transform.position.x, curr.transform.position.z) + newP;
+	var moveP : Vector3 = curr.transform.position;
+	moveP.x = Mathf.FloorToInt(newP.x);
+	moveP.z = Mathf.FloorToInt(newP.y);
+		
+	//Debug.Log(dir);
+	
+	//dir.x = Mathf.FloorToInt(dir.x);
+	//dir.z = Mathf.FloorToInt(dir.z);
+	
+	//curr.MoveTo(curr.transform.position + Vector3(3, 0, 0));
+	curr.MoveTo(moveP);
 	curr.EnemySetTarget(pum.RandomUnit().gameObject);
 	cam.SetTarget(curr.gameObject);
 	curr.EnemyUnitBegin();

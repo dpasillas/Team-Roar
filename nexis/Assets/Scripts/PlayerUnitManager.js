@@ -8,8 +8,17 @@ function Start () {
 	var gObjs = GameObject.FindGameObjectsWithTag("PlayerUnit");
 	//var g_units : Unit[] =  as Unit[];
 	units = new Array();
-	for (var u : GameObject in gObjs) 
+	
+	var base : Vector3 = Vector3(5, 0, 5);
+	for (var u : GameObject in gObjs) {
 		units.Push(u.GetComponent(Unit));
+		
+		var x : int = Mathf.FloorToInt(Random.Range(0.0, 5.0));
+		var z : int = Mathf.FloorToInt(Random.Range(0.0, -5.0));
+		var p : Vector3 = base + Vector3(x, 0, z);
+		
+		u.transform.position = p;
+	}
 	//units = new Array(g_units); 
 	activeList = new Array();
 	inactiveList = new Array(units);
@@ -63,4 +72,9 @@ function TurnIsOver() {
 
 function ActiveCount() {
 	return activeList.length;
+}
+
+function GameOver() {
+	if (activeList.length <= 0 && inactiveList.length <= 0) return true;
+	return false;
 }

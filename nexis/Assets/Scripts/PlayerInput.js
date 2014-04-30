@@ -20,6 +20,14 @@ function Start () {
 }
 
 function Update () {
+	if (gsm.GetState() == GameState.PlayerTurn) {
+		if (unitManager.GameOver()) {
+			gsm.ChangeState(GameState.GameOver);
+		}
+	}
+
+	if (gsm.GetState() != GameState.PlayerTurn) return;
+
 	if (enemies.ActiveCount() <= 0.0) {
 		promptString = "YOU WIN!";
 		return;

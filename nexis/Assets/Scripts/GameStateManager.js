@@ -1,6 +1,6 @@
 ﻿#pragma strict
 
-enum GameState { Init, PlayerTurn, EnemyTurn }
+enum GameState { Init, PlayerTurn, EnemyTurn, GameOver }
 enum MenuState { None, AttackDown, EndturnDown, Disabled }
 
 static var state : GameState;
@@ -55,4 +55,9 @@ function SetMenuState (state : MenuState) {
 
 function GetMenuState () {
 	return menuState;
+}
+
+function OnGUI() {
+	if (state == GameState.GameOver)
+		GUILayout.Label("GAME OVER");
 }
