@@ -5,28 +5,32 @@ private var activeList : Array;
 private var inactiveList : Array;
 
 function Start () {
-	var gObjs = GameObject.FindGameObjectsWithTag("PlayerUnit");
+	var gObjs = GameObject.FindGameObjectsWithTag("EnemyUnit");
 	//var g_units : Unit[] =  as Unit[];
 	units = new Array();
 	for (var u : GameObject in gObjs) 
 		units.Push(u.GetComponent(Unit));
 	//units = new Array(g_units); 
-	activeList = new Array();
-	inactiveList = new Array(units);
+	activeList = new Array(units);
+	inactiveList = new Array();
+	
+	for (var unit : Unit in activeList)
+		Debug.Log(unit);
 }
 
 
 function Update () {
 	if (activeList.length <= 0) return;
-	
+
 	if (activeList[0] == null) {
 		activeList.Shift();
 		return;
 	}
-	
+
 	var currUnit = activeList[0] as Unit;
-	if (!currUnit.CanAct()) {
-		inactiveList.Push(activeList.Shift() as Unit);
+	if (currUnit.health <= 0) {
+		activeList.Shift();
+		return;	
 	}
 }
 
@@ -41,26 +45,7 @@ function NextUnit() {
 	return activeList[0] as Unit;
 }
 
-function RandomUnit() {
-	if (inactiveList.length <= 0) return null;
-	var index : int = Mathf.FloorToInt(Random.Range(0.0, inactiveList.length));
-	return inactiveList[index] as Unit;
-}
-
-function BeginTurn() {
-	while (inactiveList.length > 0) {
-		var unit : Unit = inactiveList.Shift() as Unit;
-		unit.BeginMove();
-		unit.BeginAct();
-		activeList.Push(unit);
-	}
-}
-
-function TurnIsOver() {
-	if (activeList.length <= 0) return true;
-	return false;
-}
-
 function ActiveCount() {
 	return activeList.length;
 }
+

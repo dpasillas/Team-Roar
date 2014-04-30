@@ -1,47 +1,64 @@
 ﻿#pragma strict
 
 private var gsm : GameStateManager;
-
-private var enemies : GameObject[];
-private var camTarget : GameObject;
-
-public var projectile : GameObject;
-public var selectionCube : Transform;
-
 private var unitManager : PlayerUnitManager;
+private var enemies : EnemyUnitManager;
+private var camTarget : CameraTarget;
+
+public var selectionCube : Transform;
+public var selectIndicator : Transform;
+
 private var curr : Unit;
+private var enemySelect : Unit;
+private var promptString : String = "...";
 
 function Start () {
-	gsm = GameObject.FindGameObjectWithTag("GSM").GetComponent(GameStateManager);
-
-	enemies = GameObject.FindGameObjectsWithTag("EnemyUnit");
-	camTarget = GameObject.FindGameObjectWithTag("SelectionCamera");
-	
+	gsm = FindObjectOfType(GameStateManager);
+	camTarget = FindObjectOfType(CameraTarget);	
+	enemies = FindObjectOfType(EnemyUnitManager);
 	unitManager = FindObjectOfType(PlayerUnitManager);
 }
 
 function Update () {
-	
-	UpdateCamera();
+	if (enemies.ActiveCount() <= 0.0) {
+		promptString = "YOU WIN!";
+		return;
+	}
 
+	UpdateCamera();
 	UpdateState();
 	
 	//The following are unit-reliant actions
 	curr = unitManager.CurrentUnit();
 	if (!curr) return;
+
+	//Point camera at enemy if selected
+	if (enemySelect) SetCameraFollow(enemySelect);
+	else SetCameraFollow(curr);
 	
-	SetCameraFollow(curr);
 	MouseAction();
 	UnitAction();
 	TabAction();
+	SelectAction();
+	CancelSelect();
 }
 
 function UpdateCamera() {
+	var minFov : float = 15f;
+	var maxFov : float = 90f;
+	var speed : float = 5f;
+	
+	var fov : float = Camera.main.fieldOfView;
+	fov -= Input.GetAxis("Mouse ScrollWheel") * speed;
+	fov = Mathf.Clamp(fov, minFov, maxFov);
+	Camera.main.fieldOfView = fov;
+
+	CameraRotateAction();
+	
 	// Raycast point
 	var ray = Camera.main.ScreenPointToRay (Input.mousePosition);
 	var hit : RaycastHit;
 	if(Physics.Raycast(ray, hit, 100)) PaintSquare(hit.point);
-	CameraRotateAction();
 }
 
 function UpdateState() {
@@ -62,10 +79,13 @@ function BeginTurn() {
 
 function SetCameraFollow(next : Unit) {
 	if (!next) return;
-	camTarget.GetComponent(CameraTarget).SetTarget(next.gameObject);
+	camTarget.SetTarget(next.gameObject);
+	selectIndicator.transform.position = next.transform.position;
+	selectIndicator.transform.position.y = 0.1;
 }
 
 function MouseAction() {
+	if (gsm.GetMenuState() != MenuState.None) return;
 	if (Input.GetMouseButtonDown(0) && curr.CanMove()) { //Left Mouse
 		curr.MoveTo(selectionCube.transform.position);
 		curr.EndMove();
@@ -73,36 +93,58 @@ function MouseAction() {
 }
 
 function UnitAction() {
-	if (Input.GetKeyDown(KeyCode.E))	//End Turn Manually
-		curr.EndAct();
-
-	if (Input.GetKeyDown(KeyCode.S) && curr.CanAct()) {
-		var result = curr.ShootAt(enemies[0]);
-		if (!result)
-			Debug.Log("Can't shoot...");
-		else {
-			var pos = curr.gameObject.GetComponentInChildren(UnitLocalAnimate).transform.position;
-			var rot = curr.transform.rotation;
-			var l = Instantiate (projectile, pos, rot);
-			l.GetComponent(Laser).SetTarget(enemies[0].GetComponentInChildren(UnitLocalAnimate).gameObject);
-			Debug.Log("Enemy health is now: " + enemies[0].GetComponent(Unit).health);
-		}
+	var mState : MenuState = gsm.GetMenuState();
+	if (mState == MenuState.EndturnDown) {	//End Turn Manually
+		enemySelect = null;
 		curr.EndAct();
 	}
+
+	if (mState == MenuState.AttackDown && curr.CanAct()) {
+		if (!enemySelect) return;
+		var dist = (enemySelect.transform.position - curr.transform.position).magnitude;
+		if (dist > curr.shootRange) {
+			promptString = "You can't shoot that far...";
+			gsm.SetMenuState(MenuState.None);
+			return;
+		}
+		curr.ShootAt(enemySelect.gameObject);
+		promptString = "Enemy Hit";
+		enemySelect = null;
+		curr.EndAct();
+		camTarget.StallCam(2.5f);
+	}
+	
+	gsm.SetMenuState(MenuState.None);
 }
 
 function TabAction() {
 	if (Input.GetKeyDown(KeyCode.Tab)) {
 		var next : Unit = unitManager.NextUnit();
-		Debug.Log("Selecting " + next.unitName);
+		promptString = "Unit Health: " + next.health;
+	}
+}
+
+function SelectAction () {
+	if (Input.GetKeyDown(KeyCode.E)) {
+		enemySelect = enemies.NextUnit();
+		promptString = "Enemy Health: " + enemySelect.health;
+		var dist = (enemySelect.transform.position - curr.transform.position).magnitude;
+		if (dist > curr.shootRange)
+			promptString = "You can't shoot that far...";
+	}
+}
+
+function CancelSelect () {
+	if (Input.GetKeyDown(KeyCode.R)) {
+		enemySelect = null;
 	}
 }
 
 function CameraRotateAction() {
-	if (Input.GetKeyDown(KeyCode.RightArrow))
-		camTarget.GetComponent(CameraTarget).RotateRight();
-	if (Input.GetKeyDown(KeyCode.LeftArrow))
-		camTarget.GetComponent(CameraTarget).RotateLeft();
+	if (Input.GetKeyDown(KeyCode.A))
+		camTarget.RotateRight();
+	if (Input.GetKeyDown(KeyCode.D))
+		camTarget.RotateLeft();
 }
 
 function PaintSquare( point : Vector3 )
@@ -120,4 +162,8 @@ function PaintSquare( point : Vector3 )
 	} else {
 		selectionCube.transform.position = gridPoint;
 	}
+}
+
+function OnGUI () {
+	GUILayout.Label(promptString);
 }

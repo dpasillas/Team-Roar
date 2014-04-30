@@ -1,16 +1,22 @@
 ﻿#pragma strict
 
 enum GameState { Init, PlayerTurn, EnemyTurn }
+enum MenuState { None, AttackDown, EndturnDown, Disabled }
 
 static var state : GameState;
 
 private var player : GameObject;
 private var enemy : GameObject;
 
+private var menuItemDown : boolean;
+private var menuState : MenuState;
+
 function Start () {
 	player = GameObject.FindGameObjectWithTag("Player");
 	enemy = GameObject.FindGameObjectWithTag("Enemy");
 	state = GameState.Init;
+	menuItemDown = false;
+	menuState = MenuState.None;
 }
 
 function Update () {
@@ -33,6 +39,7 @@ function ChangeState ( newState : GameState ) {
 			break;
 		case GameState.EnemyTurn:
 			Debug.Log("Switched to Enemy");
+			menuState = MenuState.Disabled;
 			enemy.GetComponent(Enemy).DoEnemyStuff();
 			break;
 	}
@@ -40,4 +47,12 @@ function ChangeState ( newState : GameState ) {
 
 function GetState () {
 	return state;
+}
+
+function SetMenuState (state : MenuState) {
+	menuState = state;
+}
+
+function GetMenuState () {
+	return menuState;
 }

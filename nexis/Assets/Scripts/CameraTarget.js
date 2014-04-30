@@ -7,11 +7,17 @@ private var targetPos : Vector3;
 public var rotateSpeed : float = 150.0;
 private var isRotating : boolean;
 
+private var timeStall : float = 0.0;
+
 function Start () {
 	isRotating = false;
 }
 
 function Update () {
+	if (timeStall > 0.0) {
+		timeStall -= Time.deltaTime;
+		return;
+	}
 	if (targetObject != null)
 		transform.position = Vector3.MoveTowards(transform.position, targetPos, Time.deltaTime * speed);
 }
@@ -47,4 +53,9 @@ function SetTarget (gObject : GameObject)
 {
 	targetObject = gObject;
 	targetPos = targetObject.transform.position;
+}
+
+function StallCam (time : float)
+{
+	timeStall = time;
 }

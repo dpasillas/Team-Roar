@@ -33,3 +33,7 @@ function SetTarget(other : GameObject)
 	dir.Normalize ();
 	isRunning = true;
 }
+
+function Stop() {
+	isRunning = false;
+}

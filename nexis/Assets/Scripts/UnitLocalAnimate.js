@@ -3,7 +3,7 @@
 public var speed : float = 5.0;
 
 function Start () {
-
+	speed += Random.Range(0.0, 100.0);
 }
 
 function Update () {
