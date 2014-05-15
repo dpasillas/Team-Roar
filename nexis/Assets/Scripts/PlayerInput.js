@@ -64,9 +64,9 @@ function UpdateCamera() {
 	CameraRotateAction();
 	
 	// Raycast point
-	var ray = Camera.main.ScreenPointToRay (Input.mousePosition);
-	var hit : RaycastHit;
-	if(Physics.Raycast(ray, hit, 100)) PaintSquare(hit.point);
+	//var ray = Camera.main.ScreenPointToRay (Input.mousePosition);
+	//var hit : RaycastHit;
+	//if(Physics.Raycast(ray, hit, 100)) PaintSquare(hit.point);
 }
 
 function UpdateState() {
@@ -83,6 +83,8 @@ function UpdateState() {
 function BeginTurn() {
 	Debug.Log("Begin Player Turn");
 	unitManager.BeginTurn();
+	curr = unitManager.CurrentUnit();
+	curr.Select();
 }
 
 function SetCameraFollow(next : Unit) {
@@ -94,10 +96,6 @@ function SetCameraFollow(next : Unit) {
 
 function MouseAction() {
 	if (gsm.GetMenuState() != MenuState.None) return;
-	if (Input.GetMouseButtonDown(0) && curr.CanMove()) { //Left Mouse
-		curr.MoveTo(selectionCube.transform.position);
-		curr.EndMove();
-	}
 }
 
 function UnitAction() {
@@ -105,6 +103,7 @@ function UnitAction() {
 	if (mState == MenuState.EndturnDown) {	//End Turn Manually
 		enemySelect = null;
 		curr.EndAct();
+		curr.Deselect();
 	}
 
 	if (mState == MenuState.AttackDown && curr.CanAct()) {
@@ -127,7 +126,9 @@ function UnitAction() {
 
 function TabAction() {
 	if (Input.GetKeyDown(KeyCode.Tab)) {
+		curr.Deselect();
 		var next : Unit = unitManager.NextUnit();
+		next.Select();
 		promptString = "Unit Health: " + next.health;
 	}
 }

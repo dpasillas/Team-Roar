@@ -11,6 +11,8 @@ private var enemy : GameObject;
 private var menuItemDown : boolean;
 private var menuState : MenuState;
 
+private var selectedTile : Hexagon;
+
 function Start () {
 	player = GameObject.FindGameObjectWithTag("Player");
 	enemy = GameObject.FindGameObjectWithTag("Enemy");
@@ -60,4 +62,16 @@ function GetMenuState () {
 function OnGUI() {
 	if (state == GameState.GameOver)
 		GUILayout.Label("GAME OVER");
+}
+
+function SetCurrent(tile : Hexagon) {
+	selectedTile = tile;
+	Debug.Log("Selected tile: " + selectedTile.getRow() + " , " + selectedTile.getColumn());
+}
+
+function GetCurrent() {
+	return selectedTile;
+}
+
+function InitGame () {
 }

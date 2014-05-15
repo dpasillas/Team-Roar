@@ -4,26 +4,35 @@ private var units : Array; //Javascript array of units
 private var activeList : Array;
 private var inactiveList : Array;
 
+private var NUMUNITS : int = 3;
+
+public var UNIT_PREFAB : GameObject;
+
+private var grid : HexagonGrid;
+
 function Start () {
-	var gObjs = GameObject.FindGameObjectsWithTag("PlayerUnit");
-	//var g_units : Unit[] =  as Unit[];
+	//Get reference to grid
+	grid = FindObjectOfType(HexagonGrid);
+
+	//Create new units on play now
 	units = new Array();
-	
-	var base : Vector3 = Vector3(5, 0, 5);
-	for (var u : GameObject in gObjs) {
-		units.Push(u.GetComponent(Unit));
+	var i : int;
+	for (i = 0; i < NUMUNITS; ++i) {
+		var obj : GameObject = Instantiate(UNIT_PREFAB);
+		var unit : Unit = obj.GetComponent(Unit);
 		
-		var x : int = Mathf.FloorToInt(Random.Range(0.0, 5.0));
-		var z : int = Mathf.FloorToInt(Random.Range(0.0, -5.0));
-		var p : Vector3 = base + Vector3(x, 0, z);
+		var col : int = Mathf.FloorToInt(Random.Range(2.0, 8.0));
+		var row : int = Mathf.FloorToInt(Random.Range(2.0, 8.0));
 		
-		u.transform.position = p;
+		unit.initUnit(grid.Tile(col, row));
+		
+		Debug.Log(unit.transform.position);
+		units.Push(unit);
 	}
-	//units = new Array(g_units); 
+	
 	activeList = new Array();
 	inactiveList = new Array(units);
 }
-
 
 function Update () {
 	if (activeList.length <= 0) return;

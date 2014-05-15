@@ -29,7 +29,7 @@ function RotateObject (thisTransform : Transform, degrees : Vector3, seconds : f
 	var currRotation = thisTransform.rotation;
 	var targetRotation = thisTransform.rotation * Quaternion.Euler(degrees);
 	//var targetRotation = Quaternion.AngleAxis(90, Vector3.up);
-	Debug.Log(targetRotation);
+	//Debug.Log(targetRotation);
 	var t = 0.0;
 	var rate = 1.0/seconds;
 	while (t < 1.0) {
