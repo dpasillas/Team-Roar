@@ -4,18 +4,28 @@ private var units : Array; //Javascript array of units
 private var activeList : Array;
 private var inactiveList : Array;
 
+private var grid : HexagonGrid;
+
 function Start () {
+	//Get reference to grid
+	grid = FindObjectOfType(HexagonGrid);
+
 	var gObjs = GameObject.FindGameObjectsWithTag("EnemyUnit");
-	//var g_units : Unit[] =  as Unit[];
 	units = new Array();
-	for (var u : GameObject in gObjs) 
-		units.Push(u.GetComponent(Unit));
-	//units = new Array(g_units); 
+	
+	for (var obj : GameObject in gObjs) {
+		var unit : Unit = obj.GetComponent(Unit);
+		
+		var col : int = Mathf.FloorToInt(Random.Range(4, 8));
+		var row : int = Mathf.FloorToInt(Random.Range(4, 8));
+		
+		unit.initUnit(grid.Tile(col, row));
+		
+		units.Push(unit);
+	}
+
 	activeList = new Array(units);
 	inactiveList = new Array();
-	
-	for (var unit : Unit in activeList)
-		Debug.Log(unit);
 }
 
 

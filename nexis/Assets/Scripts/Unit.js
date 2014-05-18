@@ -83,9 +83,6 @@ function Update () {
 				break;
 		}
 	}
-	
-	if (health <= 0)
-		Destroy(this.gameObject, 3.0f);
 }
 
 function Select() {
@@ -235,7 +232,7 @@ function ShootAt (target : GameObject) {
 	transform.rotation = Quaternion.LookRotation(dir);
 	if (AICntrl) transform.rotation = Quaternion.LookRotation(-dir);
 
-	Invoke("ResetAfterShooting", 2.0);
+	//Invoke("ResetAfterShooting", 2.0);
 
 	shootTarget = target;
 	
@@ -250,8 +247,7 @@ function ShootLaser() {
 	var pos = GetComponentInChildren(UnitLocalAnimate).transform.position;
 	var rot = Quaternion.identity;// transform.rotation;
 	var l = Instantiate (projectile, pos, rot);
-	//l.GetComponent(Laser).SetTarget(shootTarget.GetComponentInChildren(UnitLocalAnimate).gameObject);
-	Debug.Log("Target: " + shootTarget);
+	l.GetComponent(Projectile).owner = gameObject;
 	l.GetComponent(Projectile).ShootAt(shootTarget.gameObject);
 }
 
@@ -270,6 +266,11 @@ function initUnit (tile : Hexagon)
 	currentTile = tile;
 	transform.position = currentTile.transform.position;
 	moveTarget = transform.position;
+	
+	var dmg : Damage;
+	dmg = GetComponent(Damage);
+	dmg.tile = currentTile;
+	currentTile.setOccupant(this.gameObject, Hexagon.OccupantType.TEAM_A);
 }
 
 /* These are used by Enemy AI... */

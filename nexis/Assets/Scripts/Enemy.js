@@ -18,9 +18,10 @@ function Start () {
 
 	isRunning = false;
 	
-	spawnPoints = new Array();
-	var base = Vector3(5, 0, 15);
+	//spawnPoints = new Array();
+	//var base = Vector3(5, 0, 15);
 	
+	/*
 	for (var i = 0; i < enemies.ActiveCount(); ++i) {
 		var x : int = Mathf.FloorToInt(Random.Range(0.0, 5.0));
 		var z : int = Mathf.FloorToInt(Random.Range(0.0, -5.0));
@@ -31,6 +32,7 @@ function Start () {
 		curr.MoveTo(p);
 		enemies.NextUnit();
 	}
+	*/
 }
 
 function Update () {

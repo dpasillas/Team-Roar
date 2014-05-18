@@ -47,6 +47,10 @@ public class Damage : MonoBehaviour {
 
 	void OnTriggerEnter(Collider col)
 	{
+		GameObject owner = col.gameObject.GetComponent<Projectile>().owner;
+		if (owner == gameObject)
+			return;
+
 		Debug.Log ("Collision detected!");
 		Attack a = col.gameObject.GetComponent<Attack> ();
 		if (a == null){
@@ -164,7 +168,11 @@ public class Damage : MonoBehaviour {
 			GameObject aniClone = Instantiate(deathAnimation,
 			                                  transform.position,
 			                                  deathAnimation.transform.rotation) as GameObject;
-			Color c = gameObject.renderer.material.color;
+			Color c = Color.red;
+			MeshRenderer child = GetComponentInChildren<MeshRenderer>();
+			if (child != null)
+				c = child.material.color;
+			// = gameObject.renderer.material.color;
 
 			if(aniClone.particleSystem != null)
 				aniClone.particleSystem.startColor = c;
