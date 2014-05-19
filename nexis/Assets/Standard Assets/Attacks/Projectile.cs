@@ -76,8 +76,10 @@ public class Projectile : Attack {
 		gameObject.transform.LookAt (transform.position + gameObject.rigidbody.velocity);
 	}
 
-	public void OnCollisionEnter()
+	public void OnCollisionEnter(Collision col)
 	{
+		Debug.Log("Collided with " + col.gameObject);
+		if (col.gameObject == gameObject) return;
 		Finish ();
 	}
 

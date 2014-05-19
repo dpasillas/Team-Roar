@@ -66,6 +66,8 @@ function Update () {
 function StartNextUnit () {
 	var curr : Unit;
 	curr = enemies.NextUnit();
+	if (!curr) return;
+	
 	var rTarget : Unit = pum.RandomUnit();
 	if (!rTarget) return;
 
@@ -74,15 +76,9 @@ function StartNextUnit () {
 	var moveP : Vector3 = curr.transform.position;
 	moveP.x = Mathf.FloorToInt(newP.x);
 	moveP.z = Mathf.FloorToInt(newP.y);
-		
-	//Debug.Log(dir);
-	
-	//dir.x = Mathf.FloorToInt(dir.x);
-	//dir.z = Mathf.FloorToInt(dir.z);
-	
-	//curr.MoveTo(curr.transform.position + Vector3(3, 0, 0));
+
 	curr.MoveTo(moveP);
-	curr.EnemySetTarget(pum.RandomUnit().gameObject);
+	curr.EnemySetTarget(rTarget.gameObject);
 	cam.SetTarget(curr.gameObject);
 	curr.EnemyUnitBegin();
 }

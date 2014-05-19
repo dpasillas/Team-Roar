@@ -67,6 +67,9 @@ public class Damage : MonoBehaviour {
 					return false;
 
 				GameObject obj = o.second;
+				if (obj == null) 
+					return false;
+
 				Damage dm = obj.GetComponent<Damage>();
 				if(dm == null)
 					return true;
@@ -191,5 +194,10 @@ public class Damage : MonoBehaviour {
 	void dodge()
 	{
 
+	}
+
+	public int Health()
+	{
+		return currentHP;
 	}
 }

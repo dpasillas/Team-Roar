@@ -49,9 +49,11 @@ function Awake () {
 
 function Update () {
 
-	UpdateHighlight();
-	UpdatePath();
-	MouseAction();
+	if (!AICntrl) {
+		UpdateHighlight();
+		UpdatePath();
+		MouseAction();
+	}
 		
 	//var x = Mathf.SmoothDamp(transform.position.x, moveTarget.x, xVel, speed * Time.deltaTime);
 	//var y = Mathf.SmoothDamp(transform.position.y, moveTarget.y, yVel, speed * Time.deltaTime);
@@ -62,6 +64,11 @@ function Update () {
 	//transform.position = Vector3.MoveTowards(transform.position, moveTarget, speed * Time.deltaTime);
 	
 	if (AICntrl) {
+		var x = Mathf.SmoothDamp(transform.position.x, moveTarget.x, xVel, speed * Time.deltaTime);
+		var y = Mathf.SmoothDamp(transform.position.y, moveTarget.y, yVel, speed * Time.deltaTime);
+		var z = Mathf.SmoothDamp(transform.position.z, moveTarget.z, zVel, speed * Time.deltaTime);
+		transform.position = Vector3(x, y, z);
+		
 		var dist : float;
 		dist = (transform.position - moveTarget).magnitude;
 		var tdist : float = 100000.0;
@@ -281,6 +288,7 @@ function initUnit (tile : Hexagon)
 function EnemyUnitBegin () {
 	AICntrl = true;
 	AIState = AIStates.EnemyMove;
+	Debug.Log("Began unit");
 }
 
 function EnemyUnitDone () {

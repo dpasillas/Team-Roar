@@ -7,31 +7,14 @@ public class UnitInfo extends MonoBehaviour
 	var currentHealth : int;
 	var maxHealth : int;
 	var maxHealthBarWidth : int;
-	//var guiManagerScript : GUIManager;
+	private var damage : Damage;
 	
 	function Start() {
-		//guiManagerScript = FindObjectOfType(GUIManager);
-		//guiManagerScript.initInfo(this);
+		damage = GetComponent(Damage);
 	}
 	
 	function Update() 
 	{
-		
-		if(Input.GetKeyDown("d"))	// damage
-		{
-			currentHealth -= 1;
-			if(currentHealth < 0)
-				currentHealth = 0;
-		}
-		
-		if(Input.GetKeyDown("h"))	// heal
-		{
-			currentHealth += 10;
-			if(currentHealth > maxHealth)
-				currentHealth = maxHealth;
-		}
-		
-		//guiManagerScript.renderGUIText(this);
-		
+		currentHealth = damage.Health();
 	}
 }
