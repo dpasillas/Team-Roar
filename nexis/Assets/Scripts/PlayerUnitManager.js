@@ -69,6 +69,7 @@ function Update () {
 	
 	var currUnit = activeList[0] as Unit;
 	if (!currUnit.CanAct()) {
+		currUnit.Deselect();
 		inactiveList.Push(activeList.Shift() as Unit);
 	}
 }

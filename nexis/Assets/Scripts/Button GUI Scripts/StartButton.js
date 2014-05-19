@@ -23,5 +23,5 @@ function OnMouseExit()
 
 function OnMouseDown()
 {
-	Application.LoadLevel("level1");
+	Application.LoadLevel("nexis_movement");
 }

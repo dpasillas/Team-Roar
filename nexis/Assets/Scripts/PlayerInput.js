@@ -100,14 +100,14 @@ function MouseAction() {
 
 function UnitAction() {
 	var mState : MenuState = gsm.GetMenuState();
-	if (mState == MenuState.EndturnDown) {	//End Turn Manually
+	if (Input.GetKeyDown(KeyCode.O)) {	//End Turn Manually
 		enemySelect = null;
 		curr.EndAct();
 		curr.Deselect();
 	}
 
 	//if (mState == MenuState.AttackDown && curr.CanAct()) {
-	if (Input.GetKeyDown(KeyCode.Return) && curr.CanAct()) {
+	if (Input.GetKeyDown(KeyCode.X) && curr.CanAct()) {
 		if (!enemySelect) return;
 		var dist = (enemySelect.transform.position - curr.transform.position).magnitude;
 		if (dist > curr.shootRange) {
@@ -136,7 +136,11 @@ function TabAction() {
 
 function SelectAction () {
 	if (Input.GetKeyDown(KeyCode.E)) {
+		if (enemies.ActiveCount() <= 0) return;
 		enemySelect = enemies.NextUnit();
+		
+		if (!enemySelect) return; //Catch null reference to enemy... temporary
+		
 		promptString = "Enemy Health: " + enemySelect.health;
 		var dist = (enemySelect.transform.position - curr.transform.position).magnitude;
 		if (dist > curr.shootRange)

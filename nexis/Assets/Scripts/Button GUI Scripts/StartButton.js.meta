@@ -1,0 +1,10 @@
+fileFormatVersion: 2
+guid: a19c700620d9249cb92ce8c3287d75cf
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences:
+  - start_button_idle: {instanceID: 0}
+  - start_button_hover: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 

@@ -35,6 +35,8 @@ var nextTile : Hexagon;
 private var path : List.<Hexagon> = new List.<Hexagon>();
 private var prevList : List.<Hexagon> = new List.<Hexagon>();
 
+static public var current : Unit = null;
+
 function Awake () {
 	canMove = false;
 	canAct = false;
@@ -91,12 +93,14 @@ function Select() {
 	updatingPath = true;
 	currentTile.selectTile = currentTile;
 	Highlight();
+	current = this;
 }
 
 function Deselect() {
 	selected = false;
 	currentTile.selectTile = null;
 	Unhighlight();
+	current = null;
 }
 
 function UpdateHighlight() {
