@@ -14,10 +14,11 @@ private var updatingPath : boolean;
 private var resetRot : Quaternion;
 
 // Unit stats
+enum UNIT_TYPES { SCOUT, SUPPORT, SNIPER, HEAVY };
 public var moveRange : int = 3;
 public var shootRange : float = 7.0;
 public var health : int = 5;
-public var unitName : String;
+public var unitName : UNIT_TYPES;
 public var projectile : GameObject;
 
 private var xVel : float;
@@ -39,7 +40,7 @@ function Awake () {
 	canAct = false;
 	selected = false;
 	moveTarget = transform.position;
-	unitName = "Unit" + (Mathf.FloorToInt(Random.Range(1.0, 10.0))).ToString();
+	//unitName = "Unit" + (Mathf.FloorToInt(Random.Range(1.0, 10.0))).ToString();
 	AICntrl = false;
 	AIState = AIStates.EnemyDone;
 }
@@ -254,7 +255,6 @@ function ShootLaser() {
 function OnTriggerEnter(other : Collider) {
 	Destroy(other.gameObject, 2.0);
 	health--;
-	Debug.Log(unitName + " Triggered");
 }
 
 function ResetAfterShooting() {

@@ -79,12 +79,14 @@ public class Damage : MonoBehaviour {
 					int damage = (a.ignoreArmor) ? a.attack : dm.calculateDamage(a.attack);
 					
 					if(a.healing){
-						text.color = new Color(0f,1f,0f);
+						text.color = new Color(0f,1f,1f);
 						dm.currentHP += damage;
 						if(dm.currentHP > dm.maxHP)
 							dm.currentHP = dm.maxHP;
-					} else
+					} else {
+						text.color = new Color(1f, 0f, 0f);
 						dm.currentHP -= damage;
+					}
 					text.text = s + damage;
 					if(!a.piercing)
 						a.Finish();

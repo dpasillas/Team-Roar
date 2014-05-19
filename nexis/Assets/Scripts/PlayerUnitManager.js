@@ -6,7 +6,10 @@ private var inactiveList : Array;
 
 private var NUMUNITS : int = 3;
 
-public var UNIT_PREFAB : GameObject;
+public var SCOUT_PREFAB : GameObject;
+public var SNIPER_PREFAB : GameObject;
+public var SUPPORT_PREFAB : GameObject;
+public var HEAVY_PREFAB : GameObject;
 
 private var grid : HexagonGrid;
 
@@ -15,10 +18,32 @@ function Start () {
 	grid = FindObjectOfType(HexagonGrid);
 
 	//Create new units on play now
+	NUMUNITS = PlayerPrefs.GetInt("num_units");
+	Debug.Log(NUMUNITS);
 	units = new Array();
 	var i : int;
 	for (i = 0; i < NUMUNITS; ++i) {
-		var obj : GameObject = Instantiate(UNIT_PREFAB);
+		var prepend : String = "unit_" + i.ToString() + "_";		
+		var obj : GameObject;
+		var type : int = PlayerPrefs.GetInt(prepend + "type");
+		switch(type) {
+			case 0:
+				obj = Instantiate(SCOUT_PREFAB);
+				break;
+			case 1:
+				obj = Instantiate(SUPPORT_PREFAB);
+				break;
+			case 2:
+				obj = Instantiate(SNIPER_PREFAB);
+				break;
+			case 3:
+				obj = Instantiate(HEAVY_PREFAB);
+				break;
+			default:
+				obj = Instantiate(SCOUT_PREFAB);
+				break;
+		}
+		
 		var unit : Unit = obj.GetComponent(Unit);
 		
 		var col : int = Mathf.FloorToInt(Random.Range(2.0, 8.0));

@@ -106,7 +106,8 @@ function UnitAction() {
 		curr.Deselect();
 	}
 
-	if (mState == MenuState.AttackDown && curr.CanAct()) {
+	//if (mState == MenuState.AttackDown && curr.CanAct()) {
+	if (Input.GetKeyDown(KeyCode.Return) && curr.CanAct()) {
 		if (!enemySelect) return;
 		var dist = (enemySelect.transform.position - curr.transform.position).magnitude;
 		if (dist > curr.shootRange) {
