@@ -155,6 +155,7 @@ function MouseAction() {
 	if (!selected) return;
 	if (!canMove) return;
 	if (path.Count > moveRange + 1) return;
+	if (!currentTile.hoverTile || currentTile.hoverTile.occupant) return;
 	
 	if (Input.GetMouseButtonDown(0)) {
 		updatingPath = false;
