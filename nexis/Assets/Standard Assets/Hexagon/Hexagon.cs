@@ -434,6 +434,11 @@ public class Hexagon : MonoBehaviour {
 
 	public void setOccupant(GameObject obj, OccupantType type = OccupantType.WALL)
 	{
+		if (obj == null) {
+			occupant = null;
+			return;
+		}
+
 		occupant = new Pair<OccupantType, GameObject> (type, obj);
 		Damage d = obj.GetComponent<Damage> ();
 		if (d != null)

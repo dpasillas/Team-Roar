@@ -85,6 +85,7 @@ function Update () {
 				} else {
 					ShootAt(AIShootTarget);
 					AIShootTarget = null;
+					AIState = AIStates.EnemyDone;
 				}
 				break;
 			case AIStates.EnemyDone:
@@ -167,6 +168,9 @@ function MouseAction() {
 
 function MoveAlongPath ()
 {
+	currentTile.setOccupant(null, Hexagon.OccupantType.TEAM_A);
+	currentTile.Unhighlight();
+	
 	var list : List.<Hexagon> = path;
 	var obj : GameObject = gameObject;
 
@@ -209,6 +213,7 @@ function MoveAlongPath ()
 		t = 0;
 	}
 	nextTile = list[i];
+	nextTile.setOccupant(gameObject, Hexagon.OccupantType.TEAM_A);
 }
 
 function CanMove() {
@@ -244,8 +249,6 @@ function ShootAt (target : GameObject) {
 	resetRot = transform.rotation;
 	transform.rotation = Quaternion.LookRotation(dir);
 	if (AICntrl) transform.rotation = Quaternion.LookRotation(-dir);
-
-	//Invoke("ResetAfterShooting", 2.0);
 
 	shootTarget = target;
 	

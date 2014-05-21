@@ -3,13 +3,17 @@
 public class GUIManager extends MonoBehaviour
 {
 	enum UnitClasses { Scout, Support }
+	
+	private var cur : Unit;
 
 	function Start () {
 
 	}
 
 	function Update () {
-		var cur : Unit = Unit.current;
+		if (Unit.current)
+			cur = Unit.current;
+			
 		if (cur)
 			renderGUIText(cur.GetComponent(UnitInfo));
 	}

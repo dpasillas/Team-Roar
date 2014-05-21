@@ -24,6 +24,7 @@ public class Attack : MonoBehaviour {
 
 	public virtual void Finish()
 	{
-
+		Projectile p = GetComponent<Projectile>();
+		p.Finish ();
 	}
 }

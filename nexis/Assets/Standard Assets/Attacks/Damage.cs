@@ -46,12 +46,16 @@ public class Damage : MonoBehaviour {
 	}
 
 	void OnTriggerEnter(Collider col)
+	//void OnCollisionEnter(Collision c)
 	{
+		//Collider col = c.collider;
+
 		GameObject owner = col.gameObject.GetComponent<Projectile>().owner;
 		if (owner == gameObject)
 			return;
+	
 
-		Debug.Log ("Collision detected!");
+		Debug.Log ("Collision detected with " + col.gameObject);
 		Attack a = col.gameObject.GetComponent<Attack> ();
 		if (a == null){
 			return;
@@ -91,15 +95,21 @@ public class Damage : MonoBehaviour {
 						dm.currentHP -= damage;
 					}
 					text.text = s + damage;
-					if(!a.piercing)
+					if(!a.piercing) {
+						Debug.Log ("Finishing " + a.gameObject);
 						a.Finish();
+					}
 					
-					if(dm.currentHP <= 0)
+					if(dm.currentHP <= 0) {
+						Debug.Log ("Killed " + dm.gameObject);
 						dm.die();
+					}
 				}
 				else
 				{
+					text.color = new Color(1f, 0f, 0f);
 					text.text = "Miss!";
+					Debug.Log ("MISSED");
 					dm.dodge();
 				}
 				
@@ -188,6 +198,8 @@ public class Damage : MonoBehaviour {
 
 			Destroy(aniClone,aniClone.particleSystem.duration);
 		}
+		tile.Unhighlight();
+		tile.setOccupant(null, Hexagon.OccupantType.WALL);
 		Destroy(gameObject);
 	}
 

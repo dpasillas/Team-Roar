@@ -78,7 +78,7 @@ public class Projectile : Attack {
 
 	public void OnCollisionEnter(Collision col)
 	{
-		Debug.Log("Collided with " + col.gameObject);
+		Debug.Log("Projectile Collided with " + col.gameObject);
 		if (col.gameObject == gameObject) return;
 		Finish ();
 	}

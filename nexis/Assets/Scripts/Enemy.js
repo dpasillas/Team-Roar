@@ -17,22 +17,6 @@ function Start () {
 	pum = FindObjectOfType(PlayerUnitManager);
 
 	isRunning = false;
-	
-	//spawnPoints = new Array();
-	//var base = Vector3(5, 0, 15);
-	
-	/*
-	for (var i = 0; i < enemies.ActiveCount(); ++i) {
-		var x : int = Mathf.FloorToInt(Random.Range(0.0, 5.0));
-		var z : int = Mathf.FloorToInt(Random.Range(0.0, -5.0));
-		var p : Vector3 = base + Vector3(x, 0, z);
-		
-		var curr : Unit = enemies.CurrentUnit();
-		curr.transform.position = p;
-		curr.MoveTo(p);
-		enemies.NextUnit();
-	}
-	*/
 }
 
 function Update () {
@@ -57,7 +41,6 @@ function Update () {
 	if (!curr) return;
 	
 	if (curr.EnemyUnitDone()) {
-		//WaitEndTurn(2.0f);
 		unitsLeft--;
 		if (unitsLeft <= 0) return;
 		StartNextUnit();
@@ -77,7 +60,7 @@ function StartNextUnit () {
 	moveP.x = Mathf.FloorToInt(newP.x);
 	moveP.z = Mathf.FloorToInt(newP.y);
 
-	curr.MoveTo(moveP);
+	//curr.MoveTo(moveP);
 	curr.EnemySetTarget(rTarget.gameObject);
 	cam.SetTarget(curr.gameObject);
 	curr.EnemyUnitBegin();

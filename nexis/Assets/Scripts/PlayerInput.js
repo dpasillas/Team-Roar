@@ -41,8 +41,13 @@ function Update () {
 	if (!curr) return;
 
 	//Point camera at enemy if selected
-	if (enemySelect) SetCameraFollow(enemySelect);
-	else SetCameraFollow(curr);
+	if (!camTarget.IsStalling()) {
+		if (enemySelect) SetCameraFollow(enemySelect);
+		else {
+			SetCameraFollow(curr);
+			curr.Select();
+		}
+	}
 	
 	MouseAction();
 	UnitAction();
@@ -117,6 +122,7 @@ function UnitAction() {
 		}
 		curr.ShootAt(enemySelect.gameObject);
 		promptString = "Enemy Hit";
+		enemySelect.Unhighlight();
 		enemySelect = null;
 		curr.EndAct();
 		camTarget.StallCam(2.5f);
@@ -137,9 +143,18 @@ function TabAction() {
 function SelectAction () {
 	if (Input.GetKeyDown(KeyCode.E)) {
 		if (enemies.ActiveCount() <= 0) return;
+		if (!curr) return;
+		
+		curr.Deselect();
+		
+		if (enemySelect)
+			enemySelect.Unhighlight();
+			
 		enemySelect = enemies.NextUnit();
 		
 		if (!enemySelect) return; //Catch null reference to enemy... temporary
+		enemySelect.current = enemySelect;
+		enemySelect.Highlight();
 		
 		promptString = "Enemy Health: " + enemySelect.health;
 		var dist = (enemySelect.transform.position - curr.transform.position).magnitude;
@@ -150,7 +165,11 @@ function SelectAction () {
 
 function CancelSelect () {
 	if (Input.GetKeyDown(KeyCode.R)) {
+		if (!enemySelect) return;
+		enemySelect.Unhighlight();
+		enemySelect.current = curr;
 		enemySelect = null;
+		curr.Select();
 	}
 }
 

@@ -13,6 +13,7 @@ function Start () {
 	var gObjs = GameObject.FindGameObjectsWithTag("EnemyUnit");
 	units = new Array();
 	
+	var i : int = 0;
 	for (var obj : GameObject in gObjs) {
 		var unit : Unit = obj.GetComponent(Unit);
 		
@@ -20,6 +21,10 @@ function Start () {
 		var row : int = Mathf.FloorToInt(Random.Range(4, 8));
 		
 		unit.initUnit(grid.Tile(col, row));
+		
+		var uinfo : UnitInfo = obj.GetComponent(UnitInfo);
+		uinfo.unitName = "Enemy " + i;
+		++i;
 		
 		units.Push(unit);
 	}

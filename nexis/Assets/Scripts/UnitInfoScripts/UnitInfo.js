@@ -17,4 +17,9 @@ public class UnitInfo extends MonoBehaviour
 	{
 		currentHealth = damage.Health();
 	}
+	
+	function Refresh()
+	{
+		currentHealth = damage.Health();
+	}
 }

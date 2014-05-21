@@ -59,3 +59,8 @@ function StallCam (time : float)
 {
 	timeStall = time;
 }
+
+function IsStalling ()
+{
+	return timeStall > 0.0;
+}
