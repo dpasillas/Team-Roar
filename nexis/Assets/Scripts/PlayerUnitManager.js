@@ -22,37 +22,45 @@ function Start () {
 	Debug.Log(NUMUNITS);
 	units = new Array();
 	var i : int;
+	
 	for (i = 0; i < NUMUNITS; ++i) {
+		var col : int = Mathf.FloorToInt(Random.Range(2.0, 8.0));
+		var row : int = Mathf.FloorToInt(Random.Range(2.0, 8.0));
+			
+		while (grid.Tile(col, row).occupant) {
+			col = Mathf.FloorToInt(Random.Range(2, 8));
+			row = Mathf.FloorToInt(Random.Range(2, 8));
+		}
+	
+		var tile : Hexagon = grid.Tile(col,row);
+		var pos : Vector3 = tile.transform.position;
+		var rot : Quaternion = tile.transform.rotation;
+	
+	
 		var prepend : String = "unit_" + i.ToString() + "_";		
 		var obj : GameObject;
 		var type : int = PlayerPrefs.GetInt(prepend + "type");
 		switch(type) {
 			case 0:
-				obj = Instantiate(SCOUT_PREFAB);
+				obj = Instantiate(SCOUT_PREFAB, pos, rot);
 				break;
 			case 1:
-				obj = Instantiate(SUPPORT_PREFAB);
+				obj = Instantiate(SUPPORT_PREFAB, pos, rot);
 				break;
 			case 2:
-				obj = Instantiate(SNIPER_PREFAB);
+				obj = Instantiate(SNIPER_PREFAB, pos, rot);
 				break;
 			case 3:
-				obj = Instantiate(HEAVY_PREFAB);
+				obj = Instantiate(HEAVY_PREFAB, pos, rot);
 				break;
 			default:
-				obj = Instantiate(SCOUT_PREFAB);
+				obj = Instantiate(SCOUT_PREFAB, pos, rot);
 				break;
 		}
 		
 		var unit : Unit = obj.GetComponent(Unit);
 		
-		var col : int = Mathf.FloorToInt(Random.Range(2.0, 8.0));
-		var row : int = Mathf.FloorToInt(Random.Range(2.0, 8.0));
-		
-		while (grid.Tile(col, row).occupant) {
-			col = Mathf.FloorToInt(Random.Range(2, 8));
-			row = Mathf.FloorToInt(Random.Range(2, 8));
-		}
+
 		
 		unit.initUnit(grid.Tile(col, row));
 		

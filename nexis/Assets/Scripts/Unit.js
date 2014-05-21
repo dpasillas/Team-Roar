@@ -45,6 +45,7 @@ function Awake () {
 	//unitName = "Unit" + (Mathf.FloorToInt(Random.Range(1.0, 10.0))).ToString();
 	AICntrl = false;
 	AIState = AIStates.EnemyDone;
+	
 }
 
 function Update () {
