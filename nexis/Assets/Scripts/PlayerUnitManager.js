@@ -49,6 +49,11 @@ function Start () {
 		var col : int = Mathf.FloorToInt(Random.Range(2.0, 8.0));
 		var row : int = Mathf.FloorToInt(Random.Range(2.0, 8.0));
 		
+		while (grid.Tile(col, row).occupant) {
+			col = Mathf.FloorToInt(Random.Range(2, 8));
+			row = Mathf.FloorToInt(Random.Range(2, 8));
+		}
+		
 		unit.initUnit(grid.Tile(col, row));
 		
 		Debug.Log(unit.transform.position);

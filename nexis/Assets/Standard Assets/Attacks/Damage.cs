@@ -58,8 +58,8 @@ public class Damage : MonoBehaviour {
 		Debug.Log ("Collision detected with " + col.gameObject);
 		Attack a = col.gameObject.GetComponent<Attack> ();
 		if (a == null){
-			return;
 			Debug.Log("Empty!");
+			return;
 		}
 		if(tile != null)
 			tile.breadthFirstDo(a.radius, (Pair<Hexagon.OccupantType,GameObject> o, int d) => {
