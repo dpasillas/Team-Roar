@@ -1,7 +1,7 @@
 ﻿#pragma strict
 
 private var gsm : GameStateManager;
-private var unitManager : PlayerUnitManager;
+private var unitManager : UnitManager;
 private var enemies : EnemyUnitManager;
 private var camTarget : CameraTarget;
 
@@ -16,10 +16,12 @@ function Start () {
 	gsm = FindObjectOfType(GameStateManager);
 	camTarget = FindObjectOfType(CameraTarget);	
 	enemies = FindObjectOfType(EnemyUnitManager);
-	unitManager = FindObjectOfType(PlayerUnitManager);
+	unitManager = FindObjectOfType(UnitManager);
 }
 
 function Update () {
+	if (unitManager.IsEnemyTurn()) return;
+
 	if (gsm.GetState() == GameState.PlayerTurn) {
 		if (unitManager.GameOver()) {
 			gsm.ChangeState(GameState.GameOver);
@@ -79,22 +81,24 @@ function UpdateState() {
 	if (state != GameState.PlayerTurn) 
 		return;
 	
+	/*
 	if (unitManager.TurnIsOver()) {	//Check if units are done
 		Debug.Log("End Player Turn");
 		gsm.ChangeState(GameState.EnemyTurn);
 	}
+	*/
 }
 
 function BeginTurn() {
 	Debug.Log("Begin Player Turn");
-	unitManager.BeginTurn();
+	//unitManager.BeginTurn();
 	curr = unitManager.CurrentUnit();
 	curr.Select();
 }
 
 function SetCameraFollow(next : Unit) {
 	if (!next) return;
-	camTarget.SetTarget(next.gameObject);
+	//camTarget.SetTarget(next.gameObject);
 	selectIndicator.transform.position = next.transform.position;
 	selectIndicator.transform.position.y = 0.1;
 }
@@ -133,10 +137,10 @@ function UnitAction() {
 
 function TabAction() {
 	if (Input.GetKeyDown(KeyCode.Tab)) {
-		curr.Deselect();
-		var next : Unit = unitManager.NextUnit();
-		next.Select();
-		promptString = "Unit Health: " + next.health;
+		//curr.Deselect();
+		//var next : Unit = unitManager.NextUnit();
+		//next.Select();
+		//promptString = "Unit Health: " + next.health;
 	}
 }
 

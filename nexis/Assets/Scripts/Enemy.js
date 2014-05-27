@@ -3,7 +3,7 @@
 private var gsm : GameStateManager;
 private var cam : CameraTarget;
 private var enemies : EnemyUnitManager;
-private var pum : PlayerUnitManager;
+private var pum : UnitManager;
 
 private var isRunning : boolean;
 private var unitsLeft : int;
@@ -14,7 +14,8 @@ function Start () {
 	gsm = FindObjectOfType(GameStateManager);
 	cam = FindObjectOfType(CameraTarget);
 	enemies = FindObjectOfType(EnemyUnitManager);
-	pum = FindObjectOfType(PlayerUnitManager);
+	//pum = FindObjectOfType(PlayerUnitManager);
+	pum = FindObjectOfType(UnitManager);
 
 	isRunning = false;
 }

@@ -7,6 +7,7 @@ public class UnitInfo extends MonoBehaviour
 	var currentHealth : int;
 	var maxHealth : int;
 	var maxHealthBarWidth : int;
+	var speed : int;
 	private var damage : Damage;
 	
 	function Start() {

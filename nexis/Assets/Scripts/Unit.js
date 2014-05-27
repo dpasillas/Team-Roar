@@ -25,17 +25,25 @@ private var xVel : float;
 private var yVel : float;
 private var zVel : float;
 
-enum AIStates { EnemyMove, EnemyShoot, EnemyDone };
+enum AIStates { EnemyStart, EnemyMove, EnemyShoot, EnemyDone };
+public var isEnemy : boolean = false;
 private var AIState : AIStates;
 private var AICntrl : boolean;
-private var AIShootTarget : GameObject;
+
 
 var currentTile : Hexagon;
 var nextTile : Hexagon;
+private var prevTile : Hexagon;
 private var path : List.<Hexagon> = new List.<Hexagon>();
 private var prevList : List.<Hexagon> = new List.<Hexagon>();
 
 static public var current : Unit = null;
+static public var cam : CameraTarget;
+
+//Used for Enemy AI Calcualtions
+private var unitManager : UnitManager;
+private var AIShootTarget : GameObject;
+private var AIMoveTarget : Hexagon;
 
 function Awake () {
 	canMove = false;
@@ -45,55 +53,68 @@ function Awake () {
 	//unitName = "Unit" + (Mathf.FloorToInt(Random.Range(1.0, 10.0))).ToString();
 	AICntrl = false;
 	AIState = AIStates.EnemyDone;
-	
+	unitManager = FindObjectOfType(UnitManager);
+	cam = FindObjectOfType(CameraTarget);
 }
 
 function Update () {
 
+	UpdateHighlight();
+
 	if (!AICntrl) {
-		UpdateHighlight();
 		UpdatePath();
 		MouseAction();
+	} else {
+		UpdateAI();
 	}
-		
+}
+
+function UpdateAI () {
 	//var x = Mathf.SmoothDamp(transform.position.x, moveTarget.x, xVel, speed * Time.deltaTime);
 	//var y = Mathf.SmoothDamp(transform.position.y, moveTarget.y, yVel, speed * Time.deltaTime);
 	//var z = Mathf.SmoothDamp(transform.position.z, moveTarget.z, zVel, speed * Time.deltaTime);
-
 	//transform.position = Vector3(x, y, z);
-
-	//transform.position = Vector3.MoveTowards(transform.position, moveTarget, speed * Time.deltaTime);
 	
-	if (AICntrl) {
-		var x = Mathf.SmoothDamp(transform.position.x, moveTarget.x, xVel, speed * Time.deltaTime);
-		var y = Mathf.SmoothDamp(transform.position.y, moveTarget.y, yVel, speed * Time.deltaTime);
-		var z = Mathf.SmoothDamp(transform.position.z, moveTarget.z, zVel, speed * Time.deltaTime);
-		transform.position = Vector3(x, y, z);
-		
-		var dist : float;
-		dist = (transform.position - moveTarget).magnitude;
-		var tdist : float = 100000.0;
-		if (AIShootTarget)
-			tdist = (AIShootTarget.transform.position - transform.position).magnitude;
-		switch (AIState) {
-			case AIStates.EnemyMove:
-				if (dist <= 0.001)
-					AIState = AIStates.EnemyShoot;
-				break;
-			case AIStates.EnemyShoot:
-				if (tdist > shootRange) {
-					AIState = AIStates.EnemyDone;
-				} else {
-					ShootAt(AIShootTarget);
-					AIShootTarget = null;
-					AIState = AIStates.EnemyDone;
-				}
-				break;
-			case AIStates.EnemyDone:
+	var dist : float;
+	dist = (transform.position - moveTarget).magnitude;
+	var tdist : float = 100000.0;
+	if (AIShootTarget)
+		tdist = (AIShootTarget.transform.position - transform.position).magnitude;
+	switch (AIState) {
+		case AIStates.EnemyStart:
+			Debug.Log("EnemyStart");
+			StartCoroutine(MoveAlongPath());
+			AIState = AIStates.EnemyMove;
+			break;
+			
+		case AIStates.EnemyMove:
+			Debug.Log("EnemyMove");
+			if (currentTile == AIMoveTarget) {
+				AIState = AIStates.EnemyShoot;
+				canMove = false;
+			} else {
+				AIState = AIStates.EnemyMove;
+			}
+			break;
+			
+		case AIStates.EnemyShoot:
+			Debug.Log("EnemyShoot");
+			if (tdist > shootRange) {
 				AIState = AIStates.EnemyDone;
-				AICntrl = false;
-				break;
-		}
+				canAct = false;
+			} else {
+				ShootAt(AIShootTarget);
+				AIShootTarget = null;
+				AIState = AIStates.EnemyDone;
+				canAct = false;
+			}
+			break;
+			
+		case AIStates.EnemyDone:
+			Debug.Log("EnemyDone");
+			AIState = AIStates.EnemyDone;
+			AICntrl = false;
+			break;
 	}
 }
 
@@ -116,11 +137,18 @@ function UpdateHighlight() {
 	if (!nextTile) return;
 	if (nextTile == currentTile) return;
 	Unhighlight();
+	currentTile.occupant = null;
 	currentTile = nextTile;
+	currentTile.setOccupant(gameObject, Hexagon.OccupantType.TEAM_A);
 	Highlight();
 }
 
 function Highlight() {
+	if (isEnemy) {
+		currentTile.HighlightSelect(true);
+		return;
+	}
+
 	currentTile.HighlightSelect(true);
 	if (canMove)
 		currentTile.HighlightRange(moveRange, true);
@@ -169,8 +197,8 @@ function MouseAction() {
 
 function MoveAlongPath ()
 {
-	currentTile.setOccupant(null, Hexagon.OccupantType.TEAM_A);
-	currentTile.Unhighlight();
+	//currentTile.setOccupant(null, Hexagon.OccupantType.TEAM_A);
+	//currentTile.Unhighlight();
 	
 	var list : List.<Hexagon> = path;
 	var obj : GameObject = gameObject;
@@ -214,7 +242,27 @@ function MoveAlongPath ()
 		t = 0;
 	}
 	nextTile = list[i];
-	nextTile.setOccupant(gameObject, Hexagon.OccupantType.TEAM_A);
+}
+
+function BeginTurn() {
+	BeginMove();
+	BeginAct();
+	cam.SetTarget(gameObject);
+	if (isEnemy) {
+		AICntrl = true;
+		AIState = AIStates.EnemyStart;
+		
+		//Do enemy selection here...
+		if (!unitManager) return;
+		var units : List.<Unit> = unitManager.Units();
+		var tiles : List.<Hexagon> = currentTile.HexagonsInRange(moveRange);
+		
+		var target = units[Mathf.FloorToInt(Random.Range(0.0, units.Count()))];
+		var targetTile = tiles[Mathf.FloorToInt(Random.Range(0.0, tiles.Count()))];
+		this.AIMoveTarget = targetTile;
+		this.AIShootTarget = target.gameObject;
+		this.path = currentTile.getPathTo(targetTile);
+	}
 }
 
 function CanMove() {
@@ -246,10 +294,11 @@ function MoveTo (target : Vector3) {
 }
 
 function ShootAt (target : GameObject) {
+	if (target == gameObject) return;
+		
 	var dir = target.transform.position - transform.position;
 	resetRot = transform.rotation;
 	transform.rotation = Quaternion.LookRotation(dir);
-	if (AICntrl) transform.rotation = Quaternion.LookRotation(-dir);
 
 	shootTarget = target;
 	
@@ -258,6 +307,7 @@ function ShootAt (target : GameObject) {
 	if (ani) ani.SetTrigger("Shoot");
 	
 	Invoke("ShootLaser", 1.0);
+	cam.StallCam(2.5);
 }
 
 function ShootLaser() {
@@ -268,16 +318,11 @@ function ShootLaser() {
 	l.GetComponent(Projectile).ShootAt(shootTarget.gameObject);
 }
 
-function OnTriggerEnter(other : Collider) {
-	Destroy(other.gameObject, 2.0);
-	health--;
-}
-
 function ResetAfterShooting() {
 	transform.rotation = resetRot;
 }
 
-function initUnit (tile : Hexagon)
+function InitUnit (tile : Hexagon, isEnemy : boolean)
 {
 	currentTile = tile;
 	transform.position = currentTile.transform.position;
@@ -287,6 +332,8 @@ function initUnit (tile : Hexagon)
 	dmg = GetComponent(Damage);
 	dmg.tile = currentTile;
 	currentTile.setOccupant(this.gameObject, Hexagon.OccupantType.TEAM_A);
+	
+	this.isEnemy = isEnemy;
 }
 
 /* These are used by Enemy AI... */

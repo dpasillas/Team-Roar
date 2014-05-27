@@ -19,7 +19,7 @@ function Update () {
 		return;
 	}
 	if (targetObject != null)
-		transform.position = Vector3.MoveTowards(transform.position, targetPos, Time.deltaTime * speed);
+		transform.position = Vector3.MoveTowards(transform.position, targetObject.transform.position, Time.deltaTime * speed);
 }
 
 function RotateObject (thisTransform : Transform, degrees : Vector3, seconds : float) {

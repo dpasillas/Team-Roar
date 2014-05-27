@@ -25,7 +25,7 @@ function Start () {
 			row = Mathf.FloorToInt(Random.Range(4, 8));
 		}
 		
-		unit.initUnit(grid.Tile(col, row));
+		unit.InitUnit(grid.Tile(col, row), true);
 		
 		var uinfo : UnitInfo = obj.GetComponent(UnitInfo);
 		uinfo.unitName = "Enemy " + i;

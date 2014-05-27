@@ -11,7 +11,7 @@ public var SNIPER_PREFAB : GameObject;
 public var SUPPORT_PREFAB : GameObject;
 public var HEAVY_PREFAB : GameObject;
 
-private var grid : HexagonGrid;
+private var grid : HexagonGrid;	
 
 function Start () {
 	//Get reference to grid
@@ -62,7 +62,7 @@ function Start () {
 		
 
 		
-		unit.initUnit(grid.Tile(col, row));
+		unit.InitUnit(grid.Tile(col, row), false);
 		
 		Debug.Log(unit.transform.position);
 		units.Push(unit);

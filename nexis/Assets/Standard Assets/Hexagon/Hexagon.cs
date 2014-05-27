@@ -240,6 +240,41 @@ public class Hexagon : MonoBehaviour {
 		}
 	}
 
+	public List<Hexagon> HexagonsInRange (int depth)
+	{
+		List<Hexagon> ret = new List<Hexagon>();
+
+		bool[] visited = new bool[hid+1];
+		for(int i = 0; i < hid; ++i)
+			visited[i] = false;
+		
+		Queue<KeyValuePair<Hexagon,int> > queue = new Queue< KeyValuePair<Hexagon,int> >();
+		queue.Enqueue (new KeyValuePair<Hexagon, int>(this,0));
+		
+		while(queue.Count > 0) {
+			KeyValuePair<Hexagon,int> pair = queue.Dequeue();
+			Hexagon h = pair.Key;
+			int d = pair.Value;
+			
+			if(visited[h.id])
+				continue;
+			
+			visited[h.id] = true;
+
+			if (h != this && h.occupant == null)
+				ret.Add (h);
+			
+			if(d < depth) {
+				for(int i = 0; i < h.neighbors.Count; ++i) {
+					if(!visited[h.neighbors[i].id])
+						queue.Enqueue(new KeyValuePair<Hexagon,int>(h.neighbors[i],d+1));
+				}
+			}
+		}
+
+		return ret;
+	}
+
 	void breadthFirstHighlight(int depth, int mode, Texture tex)
 	{
 		bool[] visited = new bool[hid+1];
