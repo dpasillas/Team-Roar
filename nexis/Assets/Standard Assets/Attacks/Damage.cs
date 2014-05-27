@@ -177,7 +177,6 @@ public class Damage : MonoBehaviour {
 
 	void die()
 	{
-
 		if(deathAnimation != null)
 		{
 			GameObject aniClone = Instantiate(deathAnimation,
@@ -200,7 +199,7 @@ public class Damage : MonoBehaviour {
 		}
 		tile.Unhighlight();
 		tile.setOccupant(null, Hexagon.OccupantType.WALL);
-		Destroy(gameObject);
+		gameObject.SetActive(false);
 	}
 
 	void dodge()

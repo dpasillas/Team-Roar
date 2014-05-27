@@ -336,6 +336,13 @@ function InitUnit (tile : Hexagon, isEnemy : boolean)
 	this.isEnemy = isEnemy;
 }
 
+function Die ()
+{
+	currentTile.occupant = null;
+	Unhighlight();
+	Destroy(gameObject);
+}
+
 /* These are used by Enemy AI... */
 function EnemyUnitBegin () {
 	AICntrl = true;

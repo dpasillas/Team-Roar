@@ -12,7 +12,8 @@ public var HEAVY_PREFAB : GameObject;
 
 private var units : List.<Unit>;
 
-private var NUMUNITS : int = 3;
+private var NUM_UNITS : int = 3;
+private var NUM_ENEMIES : int = 0;
 private var MAXSPEED : int = 1;
 
 function Start () {
@@ -56,6 +57,7 @@ function InitEnemyUnits()
 		++i;
 		
 		units.Add(unit);
+		NUM_ENEMIES++;
 	}
 }
 
@@ -66,9 +68,9 @@ function InitPlayerUnits()
 	var row : int;
 	var unit : Unit;
 	
-	NUMUNITS = PlayerPrefs.GetInt("num_units");
+	NUM_UNITS = PlayerPrefs.GetInt("num_units");
 	//Add player units
-	for (i = 0; i < NUMUNITS; ++i) {
+	for (i = 0; i < NUM_UNITS; ++i) {
 		col = Mathf.FloorToInt(Random.Range(2.0, 8.0));
 		row = Mathf.FloorToInt(Random.Range(2.0, 8.0));
 			
@@ -150,7 +152,16 @@ function CycleTurn()
 function CleanupUnits()
 {
 	units.RemoveAll( function(unit) {
-		return unit == null;
+		if (unit == null) return true;
+		if (!unit.gameObject.activeSelf)
+		{
+			if (unit.isEnemy) --NUM_ENEMIES; 
+			else --NUM_UNITS;
+			
+			unit.Die();
+			return true;
+		}
+		return false;
 	});
 }
 
@@ -198,6 +209,11 @@ function TurnIsOver()
 function RandomUnit()
 {
 	return units[0] as Unit;
+}
+
+function EnemyCount()
+{
+	return NUM_ENEMIES;
 }
 
 function Update () 

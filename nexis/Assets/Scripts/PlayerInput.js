@@ -2,7 +2,7 @@
 
 private var gsm : GameStateManager;
 private var unitManager : UnitManager;
-private var enemies : EnemyUnitManager;
+//private var enemies : EnemyUnitManager;
 private var camTarget : CameraTarget;
 
 public var selectionCube : Transform;
@@ -15,7 +15,6 @@ private var promptString : String = "...";
 function Start () {
 	gsm = FindObjectOfType(GameStateManager);
 	camTarget = FindObjectOfType(CameraTarget);	
-	enemies = FindObjectOfType(EnemyUnitManager);
 	unitManager = FindObjectOfType(UnitManager);
 }
 
@@ -30,7 +29,7 @@ function Update () {
 
 	if (gsm.GetState() != GameState.PlayerTurn) return;
 
-	if (enemies.ActiveCount() <= 0.0) {
+	if (unitManager.EnemyCount() <= 0.0) {
 		promptString = "YOU WIN!";
 		return;
 	}
@@ -146,7 +145,7 @@ function TabAction() {
 
 function SelectAction () {
 	if (Input.GetKeyDown(KeyCode.E)) {
-		if (enemies.ActiveCount() <= 0) return;
+		if (unitManager.EnemyCount() <= 0) return;
 		if (!curr) return;
 		
 		curr.Deselect();
@@ -154,7 +153,7 @@ function SelectAction () {
 		if (enemySelect)
 			enemySelect.Unhighlight();
 			
-		enemySelect = enemies.NextUnit();
+		//enemySelect = enemies.NextUnit();
 		
 		if (!enemySelect) return; //Catch null reference to enemy... temporary
 		enemySelect.current = enemySelect;
