@@ -219,5 +219,10 @@ function EnemyCount()
 
 function Update () 
 {
+	if (Projectile.animFlag) {
+		Debug.Log("Stalling animation");	
+		return;
+	}
+
 	CheckUnitEnded();
 }

@@ -255,6 +255,7 @@ function MoveAlongPath ()
 }
 
 function BeginTurn() {
+	Debug.Log(name + " Beginning Turn");
 	BeginMove();
 	BeginAct();
 	cam.SetTarget(gameObject);

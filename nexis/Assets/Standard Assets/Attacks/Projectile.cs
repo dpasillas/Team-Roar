@@ -18,6 +18,8 @@ public class Projectile : Attack {
 	//Specific instance
 	private GameObject expl;
 
+	public static bool animFlag = false;
+
 	float distance()
 	{
 		return dist;
@@ -29,12 +31,15 @@ public class Projectile : Attack {
 
 	protected void StartRoutine()
 	{
+		if(owner)
+			Physics.IgnoreCollision(collider,owner.collider);
 		if (target != null) 
 			SetTarget (target);
 	}
 
 	public void ShootAt(GameObject target)
 	{
+		animFlag = true;
 		this.target = target;
 	}
 
@@ -70,8 +75,9 @@ public class Projectile : Attack {
 			Finish ();
 			return;
 		}
-		float displacement = Time.deltaTime * speed;
+		float displacement = Time.deltaTime * gameObject.rigidbody.velocity.magnitude;
 		dist += displacement;
+		//Debug.Log(dist);
 
 		gameObject.transform.LookAt (transform.position + gameObject.rigidbody.velocity);
 	}
@@ -85,10 +91,14 @@ public class Projectile : Attack {
 
 	public override void Finish()
 	{
+		Debug.Log("Finishing!");
 		if (finished)
 			return;
 		finished = true;
-		
+		animFlag = false;
+
+		if(gameObject.constantForce)
+			Destroy (gameObject.constantForce);
 		Destroy (gameObject.rigidbody);
 		Destroy (gameObject.collider);
 		if(gameObject.light != null)
@@ -100,8 +110,12 @@ public class Projectile : Attack {
 			float size = 0.5f + 2 *(radius) * 0.866f;
 			expl.transform.localScale = new Vector3 (size, size, size);
 			expl.particleSystem.startSize = size;
-			Destroy (gameObject,expl.particleSystem.duration+0.01f);
+			Destroy (gameObject,expl.particleSystem.startLifetime+0.01f);
 			Destroy (expl, expl.particleSystem.duration);
+		}
+		else if(gameObject.particleSystem != null)
+		{
+			Destroy (gameObject, gameObject.particleSystem.startLifetime + 0.01f);
 		}
 		else
 		{
