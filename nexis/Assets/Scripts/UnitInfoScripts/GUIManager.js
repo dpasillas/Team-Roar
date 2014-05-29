@@ -11,7 +11,9 @@ public class GUIManager extends MonoBehaviour
 	}
 
 	function Update () {
-		if (Unit.current)
+		if (Unit.mouseDownUnit)
+			cur = Unit.mouseDownUnit;
+		else if (Unit.current)
 			cur = Unit.current;
 			
 		if (cur)

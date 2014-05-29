@@ -15,6 +15,7 @@ public class Hexagon : MonoBehaviour {
 	public static Hexagon currentTile = null;
 	public static Hexagon selectTile = null;
 	public static Hexagon hoverTile = null;
+	public static Hexagon mouseDownTile = null;
 	
 	private int column = -1;
 	private int row = -1;
@@ -357,6 +358,25 @@ public class Hexagon : MonoBehaviour {
 	{
 		renderer.material = currentBaseMat;
 		hoverTile = null;
+	}
+
+	void OnMouseDown()
+	{
+		ToggleMouseDown();
+	}
+
+	public void ToggleMouseDown()
+	{
+		if (occupant == null) {
+			mouseDownTile = null;
+			return;
+		}
+		
+		if (mouseDownTile)
+			mouseDownTile.Unhighlight();
+		
+		mouseDownTile = this;
+		mouseDownTile.HighlightSelect(true);
 	}
 
 	public void HighlightRange(int depth, bool highlightOn)

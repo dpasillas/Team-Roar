@@ -38,6 +38,7 @@ private var path : List.<Hexagon> = new List.<Hexagon>();
 private var prevList : List.<Hexagon> = new List.<Hexagon>();
 
 static public var current : Unit = null;
+static public var mouseDownUnit : Unit = null;
 static public var cam : CameraTarget;
 
 //Used for Enemy AI Calcualtions
@@ -58,6 +59,10 @@ function Awake () {
 }
 
 function Update () {
+	if (Hexagon.mouseDownTile)
+		mouseDownUnit = Hexagon.mouseDownTile.occupant.second.GetComponent(Unit);
+	else
+		mouseDownUnit = null;
 
 	UpdateHighlight();
 
@@ -67,6 +72,11 @@ function Update () {
 	} else {
 		UpdateAI();
 	}
+}
+
+function OnMouseDown()
+{
+	currentTile.ToggleMouseDown();
 }
 
 function UpdateAI () {
@@ -263,6 +273,17 @@ function BeginTurn() {
 		this.AIShootTarget = target.gameObject;
 		this.path = currentTile.getPathTo(targetTile);
 	}
+}
+
+function EndTurn() {
+	selected = false;
+	currentTile.selectTile = null;
+	Unhighlight();
+	current = null;
+	
+	if (currentTile.mouseDownTile)
+		currentTile.mouseDownTile.Unhighlight();
+	currentTile.mouseDownTile = null;
 }
 
 function CanMove() {

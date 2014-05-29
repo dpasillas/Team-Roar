@@ -143,6 +143,7 @@ function CycleTurn()
 	if (units.Count() <= 0) return null;
 	
 	var old : Unit = units[0] as Unit;
+	old.EndTurn();
 	units.RemoveAt(0);
 	units.Add(old);
 	

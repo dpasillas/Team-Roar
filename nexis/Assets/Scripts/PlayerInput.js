@@ -116,7 +116,9 @@ function UnitAction() {
 
 	//if (mState == MenuState.AttackDown && curr.CanAct()) {
 	if (Input.GetKeyDown(KeyCode.X) && curr.CanAct()) {
+		enemySelect = Unit.mouseDownUnit;
 		if (!enemySelect) return;
+		
 		var dist = (enemySelect.transform.position - curr.transform.position).magnitude;
 		if (dist > curr.shootRange) {
 			promptString = "You can't shoot that far...";
@@ -144,6 +146,9 @@ function TabAction() {
 }
 
 function SelectAction () {
+	//if (Hexagon.mouseDownTile && Hexagon.mouseDownTile.occupant)
+		//camTarget.SetTarget(Hexagon.mouseDownTile.occupant.second.gameObject);
+/*
 	if (Input.GetKeyDown(KeyCode.E)) {
 		if (unitManager.EnemyCount() <= 0) return;
 		if (!curr) return;
@@ -164,6 +169,7 @@ function SelectAction () {
 		if (dist > curr.shootRange)
 			promptString = "You can't shoot that far...";
 	}
+	*/
 }
 
 function CancelSelect () {
