@@ -58,6 +58,9 @@ function Update () {
 }
 
 function UpdateCamera() {
+	//var dir : Vector3 =  camTarget.transform.position - Camera.main.transform.position;
+	//dir.Normalize();
+
 	var minFov : float = 15f;
 	var maxFov : float = 90f;
 	var speed : float = 5f;
@@ -66,6 +69,8 @@ function UpdateCamera() {
 	fov -= Input.GetAxis("Mouse ScrollWheel") * speed;
 	fov = Mathf.Clamp(fov, minFov, maxFov);
 	Camera.main.fieldOfView = fov;
+
+	//Camera.main.transform.Translate(dir * Input.GetAxis("Mouse ScrollWheel") * Time.deltaTime * speed);
 
 	CameraRotateAction();
 	
@@ -127,9 +132,9 @@ function UnitAction() {
 		}
 		curr.ShootAt(enemySelect.gameObject);
 		promptString = "Enemy Hit";
-		enemySelect.Unhighlight();
+		//enemySelect.Unhighlight();
 		enemySelect = null;
-		curr.EndAct();
+		//curr.EndAct();
 		camTarget.StallCam(2.5f);
 	}
 	

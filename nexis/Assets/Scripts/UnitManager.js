@@ -50,7 +50,7 @@ function InitEnemyUnits()
 		}
 		
 		unit.InitUnit(grid.Tile(col, row), true);
-		unit.GetComponent(UnitInfo).speed = Mathf.FloorToInt(Random.Range(0.0, 40.0));
+		unit.GetComponent(UnitInfo).speed = Mathf.FloorToInt(Random.Range(0.0, 100.0));
 		
 		var uinfo : UnitInfo = obj.GetComponent(UnitInfo);
 		uinfo.unitName = "Enemy " + i;
@@ -107,7 +107,7 @@ function InitPlayerUnits()
 		unit = obj.GetComponent(Unit);
 		
 		unit.InitUnit(grid.Tile(col, row), false);
-		unit.GetComponent(UnitInfo).speed = Mathf.FloorToInt(Random.Range(50.0, 100.0));
+		unit.GetComponent(UnitInfo).speed = Mathf.FloorToInt(Random.Range(0.0, 100.0));
 		
 		units.Add(unit);
 		
@@ -187,7 +187,7 @@ function CompareDescending (a : Unit, b : Unit)
 
 function CheckUnitEnded()
 {
-	if (!units[0].CanAct()) {
+	if (units[0].IsDone() ) {
 		CycleTurn();
 	}
 }

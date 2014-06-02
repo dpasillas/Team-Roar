@@ -53,7 +53,7 @@ public class Damage : MonoBehaviour {
 		GameObject owner = col.gameObject.GetComponent<Projectile>().owner;
 		if (owner == gameObject)
 			return;
-	
+
 
 		Debug.Log ("Collision detected with " + col.gameObject);
 		Attack a = col.gameObject.GetComponent<Attack> ();

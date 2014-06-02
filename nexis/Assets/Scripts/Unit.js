@@ -30,7 +30,6 @@ public var isEnemy : boolean = false;
 private var AIState : AIStates;
 private var AICntrl : boolean;
 
-
 var currentTile : Hexagon;
 var nextTile : Hexagon;
 private var prevTile : Hexagon;
@@ -59,6 +58,7 @@ function Awake () {
 }
 
 function Update () {
+
 	if (Hexagon.mouseDownTile)
 		mouseDownUnit = Hexagon.mouseDownTile.occupant.second.GetComponent(Unit);
 	else
@@ -80,11 +80,6 @@ function OnMouseDown()
 }
 
 function UpdateAI () {
-	//var x = Mathf.SmoothDamp(transform.position.x, moveTarget.x, xVel, speed * Time.deltaTime);
-	//var y = Mathf.SmoothDamp(transform.position.y, moveTarget.y, yVel, speed * Time.deltaTime);
-	//var z = Mathf.SmoothDamp(transform.position.z, moveTarget.z, zVel, speed * Time.deltaTime);
-	//transform.position = Vector3(x, y, z);
-	
 	var dist : float;
 	dist = (transform.position - moveTarget).magnitude;
 	var tdist : float = 100000.0;
@@ -92,13 +87,13 @@ function UpdateAI () {
 		tdist = (AIShootTarget.transform.position - transform.position).magnitude;
 	switch (AIState) {
 		case AIStates.EnemyStart:
-			Debug.Log("EnemyStart");
+			//Debug.Log("EnemyStart");
 			StartCoroutine(MoveAlongPath());
 			AIState = AIStates.EnemyMove;
 			break;
 			
 		case AIStates.EnemyMove:
-			Debug.Log("EnemyMove");
+			//Debug.Log("EnemyMove");
 			if (currentTile == AIMoveTarget) {
 				AIState = AIStates.EnemyShoot;
 				canMove = false;
@@ -108,7 +103,7 @@ function UpdateAI () {
 			break;
 			
 		case AIStates.EnemyShoot:
-			Debug.Log("EnemyShoot");
+			//Debug.Log("EnemyShoot");
 			if (tdist > shootRange) {
 				AIState = AIStates.EnemyDone;
 				canAct = false;
@@ -121,7 +116,7 @@ function UpdateAI () {
 			break;
 			
 		case AIStates.EnemyDone:
-			Debug.Log("EnemyDone");
+			//Debug.Log("EnemyDone");
 			AIState = AIStates.EnemyDone;
 			AICntrl = false;
 			break;
@@ -282,9 +277,10 @@ function EndTurn() {
 	Unhighlight();
 	current = null;
 	
-	if (currentTile.mouseDownTile)
-		currentTile.mouseDownTile.Unhighlight();
-	currentTile.mouseDownTile = null;
+	if (Hexagon.mouseDownTile)
+		Hexagon.mouseDownTile.Unhighlight();
+		
+	Hexagon.mouseDownTile = null;
 }
 
 function CanMove() {
@@ -338,6 +334,7 @@ function ShootLaser() {
 	var l = Instantiate (projectile, pos, rot);
 	l.GetComponent(Projectile).owner = gameObject;
 	l.GetComponent(Projectile).ShootAt(shootTarget.gameObject);
+	EndAct();
 }
 
 function ResetAfterShooting() {
@@ -360,10 +357,22 @@ function InitUnit (tile : Hexagon, isEnemy : boolean)
 
 function Die ()
 {
+	if (Hexagon.mouseDownTile == currentTile)
+		Hexagon.mouseDownTile = null;
+		
 	currentTile.occupant = null;
-	Unhighlight();
+	//Unhighlight();
 	Destroy(gameObject);
 }
+
+function IsDone()
+{
+	if (Projectile.animFlag)
+		return false;
+		
+	return !canAct;
+}
+
 
 /* These are used by Enemy AI... */
 function EnemyUnitBegin () {

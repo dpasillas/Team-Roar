@@ -95,7 +95,7 @@ public class Projectile : Attack {
 		if (finished)
 			return;
 		finished = true;
-		animFlag = false;
+
 
 		if(gameObject.constantForce)
 			Destroy (gameObject.constantForce);
@@ -123,5 +123,6 @@ public class Projectile : Attack {
 
 		}
 
+		animFlag = false;
 	}
 }

@@ -24,7 +24,6 @@ public class Hexagon : MonoBehaviour {
 	public static Hexagon current = null;
 	private int g = 0;
 	private int f = 0;
-
 	private static Shader[] shaders = {Shader.Find("Diffuse"), Shader.Find("Particles/Alpha Blended"), Shader.Find("Particles/Alpha Blended")};
 	private static Color[] colors = {Color.white, new Color (0f, 0.5f, 0.5f, 0.5f), new Color(0.5f,0f,0f,0.5f)};
 	private static string[] colorss = {"_Color", "_TintColor", "_TintColor"};
