@@ -20,6 +20,7 @@ public var shootRange : float = 7.0;
 public var health : int = 5;
 public var unitName : UNIT_TYPES;
 public var projectile : GameObject;
+public var tossProjectile : GameObject;
 
 private var xVel : float;
 private var yVel : float;
@@ -55,6 +56,8 @@ function Awake () {
 	AIState = AIStates.EnemyDone;
 	unitManager = FindObjectOfType(UnitManager);
 	cam = FindObjectOfType(CameraTarget);
+	
+	shootRange = projectile.GetComponent(Projectile).range;
 }
 
 function Update () {
@@ -87,13 +90,13 @@ function UpdateAI () {
 		tdist = (AIShootTarget.transform.position - transform.position).magnitude;
 	switch (AIState) {
 		case AIStates.EnemyStart:
-			//Debug.Log("EnemyStart");
+			Debug.Log("EnemyStart");
 			StartCoroutine(MoveAlongPath());
 			AIState = AIStates.EnemyMove;
 			break;
 			
 		case AIStates.EnemyMove:
-			//Debug.Log("EnemyMove");
+			Debug.Log("EnemyMove");
 			if (currentTile == AIMoveTarget) {
 				AIState = AIStates.EnemyShoot;
 				canMove = false;
@@ -103,20 +106,23 @@ function UpdateAI () {
 			break;
 			
 		case AIStates.EnemyShoot:
-			//Debug.Log("EnemyShoot");
-			if (tdist > shootRange) {
+			Debug.Log("EnemyShoot");
+			Debug.Log(AIShootTarget);
+			if (!AIShootTarget) {
 				AIState = AIStates.EnemyDone;
-				canAct = false;
+				EndAct();
+			} else if (tdist > shootRange) {
+				AIState = AIStates.EnemyDone;
+				EndAct();
 			} else {
-				ShootAt(AIShootTarget);
+				ShootAt(AIShootTarget, 1);
 				AIShootTarget = null;
 				AIState = AIStates.EnemyDone;
-				canAct = false;
 			}
 			break;
 			
 		case AIStates.EnemyDone:
-			//Debug.Log("EnemyDone");
+			Debug.Log("EnemyDone");
 			AIState = AIStates.EnemyDone;
 			AICntrl = false;
 			break;
@@ -205,6 +211,8 @@ function MoveAlongPath ()
 	//currentTile.setOccupant(null, Hexagon.OccupantType.TEAM_A);
 	//currentTile.Unhighlight();
 	
+	if (path.Count() <= 0) return;
+	
 	var list : List.<Hexagon> = path;
 	var obj : GameObject = gameObject;
 
@@ -263,11 +271,146 @@ function BeginTurn() {
 		var units : List.<Unit> = unitManager.Units();
 		var tiles : List.<Hexagon> = currentTile.HexagonsInRange(moveRange);
 		
-		var target = units[Mathf.FloorToInt(Random.Range(0.0, units.Count()))];
-		var targetTile = tiles[Mathf.FloorToInt(Random.Range(0.0, tiles.Count()))];
+		//var target = units[Mathf.FloorToInt(Random.Range(0.0, units.Count()))];
+		//var targetTile = tiles[Mathf.FloorToInt(Random.Range(0.0, tiles.Count()))];
+		
+		var targetTile = GetTargetTile();
+		var target = GetBestShootTargetByTile(targetTile);
+		
 		this.AIMoveTarget = targetTile;
-		this.AIShootTarget = target.gameObject;
+		this.AIShootTarget = target;
 		this.path = currentTile.getPathTo(targetTile);
+	}
+}
+
+/*
+Action priorities:
+Move closer to enemy : 0
+Move farther from enemy : 1
+Move farther at low health : 2
+
+Do nothing: 0
+Shoot enemy: 1
+Throw Grenade at 2+ enemies : 2
+Shoot dying enemy : 3
+*/
+
+private var LOW_LIMIT : int = 35;
+
+function RankTile(tile : Hexagon) {
+	//Can't go on that tile
+	if (tile.occupant) return;
+	if (!unitManager) return;
+	
+	var units : List.<Unit> = unitManager.Units();
+	var score : int = 0;
+	var actScore : int = 0;
+	var health : int = GetComponent(Damage).Health();
+	var maxHealth : int = GetComponent(Damage).maxHP;
+	
+	for (unit in units) {
+		var currDist : double = (unit.transform.position - currentTile.transform.position).magnitude;	
+		var newDist : double = (unit.transform.position - tile.transform.position).magnitude;
+		
+		if (newDist < currDist)
+			score += 1;
+		else if (newDist > currDist && health <= LOW_LIMIT)
+			score += 2;
+		else if (newDist > currDist)
+			score += 0;
+		else;
+		
+		if (newDist <= shootRange  && !unit.isEnemy && CheckNoObstacles(unit.gameObject))
+		{
+			if (unit.GetComponent(Damage).Health() <= LOW_LIMIT)
+				actScore = 2;
+			else
+				actScore = 1;
+			//var pScore : int = unit.GetComponent(Damage).maxHP - unit.GetComponent(Damage).Health();
+			//if (pScore + 1 > actScore && !unit.isEnemy)
+			//	actScore = pScore;
+		}
+	}
+	
+	score += actScore;
+			
+	return score;
+}
+
+function GetTargetTile () {
+	var tiles : List.<Hexagon> = currentTile.HexagonsInRange(moveRange);
+	
+	var targetTile : Hexagon = null;
+	var bestScore : int = 0;
+	
+	for (tile in tiles) {
+		var score : int = RankTile(tile);
+		if (score > bestScore) {
+			bestScore = score;
+			targetTile = tile;
+		}
+	}
+	
+	if (targetTile == null) return currentTile;
+	return targetTile;
+}
+
+function GetBestShootTargetByTile (tile : Hexagon)
+{
+	if (!unitManager) return;
+	var units : List.<Unit> = unitManager.Units();
+	var actScore : int = 0;
+	var targetUnit : Unit = null;
+	var pTargetUnit : Unit = null;
+	
+	//targetUnit = units[Mathf.FloorToInt(Random.Range(0.0, units.Count()))];
+	
+	//while (targetUnit.isEnemy)
+	//	targetUnit = units[Mathf.FloorToInt(Random.Range(0.0, units.Count()))];
+	
+	var potentialTargets : List.<Unit> = new List.<Unit>();
+	
+	for (unit in units) {
+		var newDist : double = (unit.transform.position - tile.transform.position).magnitude;
+		
+		if (newDist <= shootRange && !unit.isEnemy)
+		{
+			if (unit.GetComponent(Damage).Health() <= LOW_LIMIT) {
+				pTargetUnit = unit;
+				actScore = 2;
+			} else {
+				actScore = 1;
+				potentialTargets.Add(unit);
+			}
+			/*	
+			var pScore : int = unit.GetComponent(Damage).maxHP - unit.GetComponent(Damage).Health();
+			if (pScore + 1 > actScore && !unit.isEnemy) {
+				actScore = pScore;
+				targetUnit = unit;
+			}
+			*/
+		}
+	}
+	
+	if (pTargetUnit) return pTargetUnit.gameObject;
+	if (potentialTargets.Count() <= 0) return null;
+	targetUnit = potentialTargets[Mathf.FloorToInt(Random.Range(0.0, potentialTargets.Count()))];
+	if (targetUnit) return targetUnit.gameObject;
+	return null;
+}
+
+function CheckNoObstacles (target: GameObject) {
+	var dir : Vector3 = target.transform.position - transform.position;
+	dir.Normalize();
+	var ray : Ray = new Ray(transform.position, dir);
+	var hit : RaycastHit;
+	if (collider.Raycast(ray, hit, shootRange)) {
+		var unit : Unit = hit.collider.GetComponent(Unit);
+		if (unit) {
+			if (!unit.isEnemy)
+				return true;
+		}
+		return false;
 	}
 }
 
@@ -311,7 +454,7 @@ function MoveTo (target : Vector3) {
 	moveTarget = target;
 }
 
-function ShootAt (target : GameObject) {
+function ShootAt (target : GameObject, attackNum : int) {
 	if (target == gameObject) return;
 		
 	var dir = target.transform.position - transform.position;
@@ -324,7 +467,13 @@ function ShootAt (target : GameObject) {
 	var ani : Animator = GetComponentInChildren(Animator);
 	if (ani) ani.SetTrigger("Shoot");
 	
-	Invoke("ShootLaser", 1.0);
+	if (attackNum == 1)
+		Invoke("ShootLaser", 1.0);
+	else if (attackNum == 2)
+		Invoke("TossAttack", 1.0);
+	else
+		Invoke("ShootLaser", 1.0);
+	
 	cam.StallCam(2.5);
 }
 
@@ -332,6 +481,15 @@ function ShootLaser() {
 	var pos = GetComponentInChildren(UnitLocalAnimate).transform.position;
 	var rot = Quaternion.identity;// transform.rotation;
 	var l = Instantiate (projectile, pos, rot);
+	l.GetComponent(Projectile).owner = gameObject;
+	l.GetComponent(Projectile).ShootAt(shootTarget.gameObject);
+	EndAct();
+}
+
+function TossAttack() {
+	var pos = GetComponentInChildren(UnitLocalAnimate).transform.position;
+	var rot = Quaternion.identity;// transform.rotation;
+	var l = Instantiate (tossProjectile, pos, rot);
 	l.GetComponent(Projectile).owner = gameObject;
 	l.GetComponent(Projectile).ShootAt(shootTarget.gameObject);
 	EndAct();

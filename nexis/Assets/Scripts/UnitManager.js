@@ -41,12 +41,12 @@ function InitEnemyUnits()
 	for (var obj : GameObject in gObjs) {
 		unit = obj.GetComponent(Unit);
 		
-		col = Mathf.FloorToInt(Random.Range(4, 8));
-		row = Mathf.FloorToInt(Random.Range(4, 8));
+		col = Mathf.FloorToInt(Random.Range(5, 10));
+		row = Mathf.FloorToInt(Random.Range(5, 10));
 		
 		while (grid.Tile(col, row).occupant) {
-			col = Mathf.FloorToInt(Random.Range(4, 8));
-			row = Mathf.FloorToInt(Random.Range(4, 8));
+			col = Mathf.FloorToInt(Random.Range(5, 10));
+			row = Mathf.FloorToInt(Random.Range(5, 10));
 		}
 		
 		unit.InitUnit(grid.Tile(col, row), true);
@@ -139,6 +139,9 @@ function CycleTurn()
 	//Cleanup dead units
 	CleanupUnits();
 	
+	if (GameOver())
+		return;
+	
 	//Nothing left to do?... Bad case proceed with caution
 	if (units.Count() <= 0) return null;
 	
@@ -199,6 +202,12 @@ function IsEnemyTurn()
 
 function GameOver()
 {
+	return (NUM_UNITS <= 0) || (NUM_ENEMIES <= 0);
+}
+
+function DidPlayerWin()
+{
+	if (NUM_ENEMIES <= 0) return true;
 	return false;
 }
 
@@ -217,12 +226,23 @@ function EnemyCount()
 	return NUM_ENEMIES;
 }
 
+function UnitAvgPos()
+{
+	var sum = Vector3.zero;
+	for (unit in units)
+		sum += unit.transform.position;
+	
+	return sum / units.Count();
+}
+
 function Update () 
 {
-	if (Projectile.animFlag) {
-		Debug.Log("Stalling animation");	
+	//if (Projectile.animFlag) {
+	//	Debug.Log("Stalling animation");	
+	//	return;
+	//}
+	if (GameOver())
 		return;
-	}
-
+	
 	CheckUnitEnded();
 }

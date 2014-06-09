@@ -12,6 +12,7 @@ private var menuItemDown : boolean;
 private var menuState : MenuState;
 
 private var selectedTile : Hexagon;
+private var unitManager : UnitManager;
 
 function Start () {
 	player = GameObject.FindGameObjectWithTag("Player");
@@ -19,6 +20,8 @@ function Start () {
 	state = GameState.Init;
 	menuItemDown = false;
 	menuState = MenuState.None;
+	
+	unitManager = FindObjectOfType(UnitManager);
 }
 
 function Update () {
@@ -43,6 +46,13 @@ function ChangeState ( newState : GameState ) {
 			Debug.Log("Switched to Enemy");
 			menuState = MenuState.Disabled;
 			enemy.GetComponent(Enemy).DoEnemyStuff();
+			break;
+		case GameState.GameOver:
+			Debug.Log("Game Over");
+			if (unitManager.DidPlayerWin())
+				Debug.Log("Player Won!");
+			else
+				Debug.Log("Game Over... All Units Dead");
 			break;
 	}
 }

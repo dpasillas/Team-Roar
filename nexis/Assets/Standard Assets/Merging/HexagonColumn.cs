@@ -26,13 +26,11 @@ public class HexagonColumn : MonoBehaviour {
 			shaders[1] = Shader.Find("Particles/Alpha Blended");
 			shaders[2] = Shader.Find("Particles/Alpha Blended");
 		}
-
 		
 		Vector3[] newVertices = new Vector3[14];
 		Vector3[] newNormals = new Vector3[14];
 		Vector2[] newUV = new Vector2[14];
 		int[] newTriangles = new int[24*3];
-		
 		
 		newVertices [0] = new Vector3 (0f, height, 0f);
 		for (int i = 1; i < 7; ++i)

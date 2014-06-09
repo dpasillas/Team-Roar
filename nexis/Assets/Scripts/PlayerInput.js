@@ -12,20 +12,32 @@ private var curr : Unit;
 private var enemySelect : Unit;
 private var promptString : String = "...";
 
+private var camPosTarget : GameObject;
+
 function Start () {
 	gsm = FindObjectOfType(GameStateManager);
 	camTarget = FindObjectOfType(CameraTarget);	
 	unitManager = FindObjectOfType(UnitManager);
+	camPosTarget = new GameObject();
 }
 
 function Update () {
-	if (unitManager.IsEnemyTurn()) return;
-
+	
 	if (gsm.GetState() == GameState.PlayerTurn) {
 		if (unitManager.GameOver()) {
 			gsm.ChangeState(GameState.GameOver);
 		}
 	}
+	
+	var newPos : Vector3 = unitManager.UnitAvgPos();
+	var dirToSelect : Vector3 = unitManager.CurrentUnit().transform.position - newPos;
+	dirToSelect.Normalize();
+	camPosTarget.transform.position = unitManager.UnitAvgPos();
+	//if (!unitManager.IsEnemyTurn())
+	//	camPosTarget.transform.position = newPos + (dirToSelect * 1.0);
+	camTarget.SetTarget(camPosTarget);
+
+	if (unitManager.IsEnemyTurn()) return;
 
 	if (gsm.GetState() != GameState.PlayerTurn) return;
 
@@ -33,7 +45,7 @@ function Update () {
 		promptString = "YOU WIN!";
 		return;
 	}
-
+	
 	UpdateCamera();
 	UpdateState();
 	
@@ -61,8 +73,8 @@ function UpdateCamera() {
 	//var dir : Vector3 =  camTarget.transform.position - Camera.main.transform.position;
 	//dir.Normalize();
 
-	var minFov : float = 15f;
-	var maxFov : float = 90f;
+	var minFov : float = 10f;
+	var maxFov : float = 30f;
 	var speed : float = 5f;
 	
 	var fov : float = Camera.main.fieldOfView;
@@ -120,7 +132,13 @@ function UnitAction() {
 	}
 
 	//if (mState == MenuState.AttackDown && curr.CanAct()) {
-	if (Input.GetKeyDown(KeyCode.X) && curr.CanAct()) {
+	
+	var attack1 : boolean = Input.GetKeyDown(KeyCode.X);
+	var attack2 : boolean = Input.GetKeyDown(KeyCode.G);
+	
+	var attackTriggered : boolean = attack1 || attack2;
+	
+	if (attackTriggered && curr.CanAct()) {
 		enemySelect = Unit.mouseDownUnit;
 		if (!enemySelect) return;
 		
@@ -130,7 +148,14 @@ function UnitAction() {
 			gsm.SetMenuState(MenuState.None);
 			return;
 		}
-		curr.ShootAt(enemySelect.gameObject);
+		
+		if (attack1)
+			curr.ShootAt(enemySelect.gameObject, 1);
+		else if (attack2)
+			curr.ShootAt(enemySelect.gameObject, 2);
+		else
+			curr.ShootAt(enemySelect.gameObject, 1);
+			
 		promptString = "Enemy Hit";
 		//enemySelect.Unhighlight();
 		enemySelect = null;

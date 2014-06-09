@@ -11,12 +11,14 @@ public class Hexagon : MonoBehaviour {
 	public Material hoverMat;
 	public Material moveMat;
 	public Material selectMat;
+	public GameObject wallPrefab;
+	public GameObject tilePrefab;
 
 	public static Hexagon currentTile = null;
 	public static Hexagon selectTile = null;
 	public static Hexagon hoverTile = null;
 	public static Hexagon mouseDownTile = null;
-	
+
 	private int column = -1;
 	private int row = -1;
 	public List<Hexagon> neighbors;
@@ -30,6 +32,7 @@ public class Hexagon : MonoBehaviour {
 	private static int hid = 0;
 	private int id = hid++;
 
+	public bool enabled = true;
 
 
 	//occupant is an obstacle, should be set and unset appropriately
@@ -349,18 +352,21 @@ public class Hexagon : MonoBehaviour {
 
 	void OnMouseEnter()
 	{	
+		if (!enabled) return;
 		renderer.material = hoverMat;
 		hoverTile = this;
 	}
 
 	void OnMouseExit()
 	{
+		if (!enabled) return;
 		renderer.material = currentBaseMat;
 		hoverTile = null;
 	}
 
 	void OnMouseDown()
 	{
+		if (!enabled) return;
 		ToggleMouseDown();
 	}
 
@@ -504,6 +510,30 @@ public class Hexagon : MonoBehaviour {
 		setOccupant (obj, type);
 		obj.transform.position = this.transform.position;
 		obj.transform.rotation = this.transform.rotation;
+	}
+
+	public void setWall()
+	{
+		GameObject wall = Instantiate(wallPrefab) as GameObject;
+
+		for (int i = 1; i <= 6; ++i) {
+
+
+			GameObject tile = Instantiate (tilePrefab) as GameObject;
+			tile.GetComponent<Hexagon>().enabled = false;
+
+			//Destroy (tile.GetComponent<MeshCollider>());
+			//tile.renderer.material = hoverMat;
+			tile.transform.position = this.transform.position;
+			tile.transform.rotation = this.transform.rotation;
+
+			Vector3 pos = tile.transform.position;
+			pos.y = i * 0.25f + 0.01f;
+			tile.transform.position = pos;
+
+		}
+
+		setAndPositionOccupant(wall, OccupantType.WALL);
 	}
 
 	private class HexComparer : IComparer<Hexagon>

@@ -12,7 +12,7 @@ public class HexagonGrid : MonoBehaviour {
 	public GameObject obstacle;
 	void Awake () {
 		hexagons = new Hexagon[columns][];
-		for(int i = 0; i < columns; ++i)
+		for(int i = 0; i < columns; ++i) 
 			hexagons[i] = new Hexagon[minRows+ i%2];
 
 		for (int i = 0; i < columns; ++i){
@@ -28,6 +28,10 @@ public class HexagonGrid : MonoBehaviour {
 				if(hexagons[i][j] == null)
 					Debug.Log("Hexagon error!");
 				hexagons[i][j].setTilePos(i,j);
+
+				double roll = Random.Range(0.0f, 100.0f);
+				if (roll < 10.0)
+					hexagons[i][j].setWall();
 			}
 		}
 
