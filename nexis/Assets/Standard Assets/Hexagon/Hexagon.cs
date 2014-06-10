@@ -516,6 +516,7 @@ public class Hexagon : MonoBehaviour {
 	public void setWall()
 	{
 		GameObject wall = Instantiate(wallPrefab) as GameObject;
+		setAndPositionOccupant(wall, OccupantType.WALL);
 		Vector3 scale = wall.transform.localScale;
 		scale.y = Mathf.FloorToInt(UnityEngine.Random.Range (1.0f, 3.0f));
 		wall.transform.localScale = scale;
@@ -540,10 +541,11 @@ public class Hexagon : MonoBehaviour {
 			Vector3 pos = tile.transform.position;
 			pos.y = i * 0.50f + 0.01f;
 			tile.transform.position = pos;
+			tile.transform.parent = wall.transform;
 
 		}
 
-		setAndPositionOccupant(wall, OccupantType.WALL);
+		wall.transform.parent = gameObject.transform;
 	}
 
 	private class HexComparer : IComparer<Hexagon>

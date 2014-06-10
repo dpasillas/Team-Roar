@@ -9,7 +9,12 @@ public var SCOUT_PREFAB : GameObject;
 public var SNIPER_PREFAB : GameObject;
 public var SUPPORT_PREFAB : GameObject;
 public var HEAVY_PREFAB : GameObject;
-
+/*
+public var EN_SCOUT_PREFAB : GameObject;
+public var EN_SNIPER_PREFAB : GameObject;
+public var EN_SUPPORT_PREFAB : GameObject;
+public var EN_HEAVY_PREFAB : GameObject;
+*/
 private var units : List.<Unit>;
 
 private var NUM_UNITS : int = 3;
@@ -21,12 +26,95 @@ function Start () {
 
 	//Get reference to grid
 	grid = FindObjectOfType(HexagonGrid);
-	
+	loadFromFile(0);
 	InitPlayerUnits();
 	InitEnemyUnits();
 	
 	SortUnits();
 	BeginTurn();
+}
+
+function loadFromFile(i : int) {
+	var filename : String = "level" + i + ".txt";
+	var reader : System.IO.TextReader = System.IO.File.OpenText(filename);
+	
+	var value : int = -1;
+	var cols : int = reader.Read();
+	var minRows : int = reader.Read();
+	
+	var col : int = 0;
+	var row : int = -1;
+	
+	var obj : GameObject = null;
+	var unit : Unit = null;
+	
+	while( true ) {
+		value = reader.Read();
+		if(value == -1)
+			break;
+			
+		row++;
+			
+		var tile : Hexagon = grid.Tile(col,row);
+		var c : char = value;
+		
+		switch(c) {
+			case 'o':
+			case 'O':
+				//do nothing.  Tile remains empty
+				break;
+			case 'x':
+			case 'X':
+				tile.setWall();
+				break;
+			case 'c':
+				createUnit(SCOUT_PREFAB,tile,false);
+				break;
+			case 'C':
+				createUnit(SCOUT_PREFAB,tile,true);
+				break;
+			case 'n':
+				createUnit(SNIPER_PREFAB,tile,false);
+				break;
+			case 'N':
+				createUnit(SNIPER_PREFAB,tile,true);
+				break;
+			case 'h':
+				createUnit(HEAVY_PREFAB,tile,false);
+				break;
+			case 'H':
+				createUnit(HEAVY_PREFAB,tile,true);
+				break;
+			case 'u':
+				createUnit(SUPPORT_PREFAB,tile,false);
+				break;
+			case 'U':
+				createUnit(SUPPORT_PREFAB,tile,true);
+				break;
+			case '\n':
+				col++;
+				row = -1;
+				break;
+			default:;
+		}
+	}
+}
+
+function createUnit(prefab : GameObject, tile : Hexagon, enemy : boolean) {
+	var obj : GameObject = Instantiate(prefab, tile.transform.position, tile.transform.rotation);
+	var unit : Unit = obj.GetComponent(Unit);
+	
+	unit.InitUnit(tile,enemy);
+	unit.GetComponent(UnitInfo).speed = Mathf.FloorToInt(Random.Range(0.0, 100.0));
+	
+	if(enemy) {
+		var uinfo : UnitInfo = obj.GetComponent(UnitInfo);
+		uinfo.unitName = "Enemy " + NUM_ENEMIES;
+		
+		NUM_ENEMIES++;
+	}
+	
+	units.Add(unit);
 }
 
 function InitEnemyUnits()
