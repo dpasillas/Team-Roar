@@ -20,6 +20,7 @@ function Start () {
 	state = GameState.Init;
 	menuItemDown = false;
 	menuState = MenuState.None;
+	PropertyList.initPropertyList();
 	
 	unitManager = FindObjectOfType(UnitManager);
 }

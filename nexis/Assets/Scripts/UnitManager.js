@@ -108,6 +108,7 @@ function InitPlayerUnits()
 		
 		unit.InitUnit(grid.Tile(col, row), false);
 		unit.GetComponent(UnitInfo).speed = Mathf.FloorToInt(Random.Range(0.0, 100.0));
+		unit.GetComponent(UnitInfo).loadUnitStats(i);
 		
 		units.Add(unit);
 		
