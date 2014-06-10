@@ -23,5 +23,5 @@ function OnMouseExit()
 
 function OnMouseDown()
 {
-	Application.LoadLevel("StatChangeMenu");
+	Application.LoadLevel("level1");
 }
