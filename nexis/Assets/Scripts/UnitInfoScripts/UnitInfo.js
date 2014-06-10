@@ -3,11 +3,16 @@
 public class UnitInfo extends MonoBehaviour
 {
 	var unitName : String;
-	var className : String;
+	var unitClass : int;
 	var currentHealth : int;
 	var maxHealth : int;
 	var maxHealthBarWidth : int;
+	var atk : int;
+	var def : int;
+	var dex : int;
 	var speed : int;
+	var scui : StatChangeUnitInfo;
+	
 	private var damage : Damage;
 	
 	function Start() {
@@ -19,8 +24,19 @@ public class UnitInfo extends MonoBehaviour
 		currentHealth = damage.Health();
 	}
 	
-	function Refresh()
+	function loadUnitStats(index : int)
 	{
-		currentHealth = damage.Health();
+		var scui : StatChangeUnitInfo = new StatChangeUnitInfo();
+		PropertyList.deserializePropertyList(scui, index);
+		
+		unitName = scui.unitName;
+		unitClass = scui.unitClass;
+		currentHealth = scui.hp;
+		maxHealth = scui.maxHP;
+		maxHealthBarWidth = scui.hpBarWidth;
+		atk = scui.atk;
+		def = scui.def;
+		dex = scui.dex;
+		speed = scui.dex;
 	}
 }
