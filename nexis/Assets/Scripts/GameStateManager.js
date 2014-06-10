@@ -50,10 +50,13 @@ function ChangeState ( newState : GameState ) {
 			break;
 		case GameState.GameOver:
 			Debug.Log("Game Over");
-			if (unitManager.DidPlayerWin())
+			if (unitManager.DidPlayerWin()) {
 				Debug.Log("Player Won!");
-			else
+				//Application.LoadLevel("Victory");
+			} else {
 				Debug.Log("Game Over... All Units Dead");
+				//Application.LoadLevel("GameOver");
+			}
 			break;
 	}
 }

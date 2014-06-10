@@ -28,7 +28,7 @@ function Start () {
 
 	//Get reference to grid
 	grid = FindObjectOfType(HexagonGrid);
-	loadFromFile(0);
+	loadFromFile(1);
 	//InitPlayerUnits();
 	//InitEnemyUnits();
 	
@@ -37,8 +37,13 @@ function Start () {
 }
 
 function loadFromFile(level : int) {
-	var filename : String = "level" + level + ".dat";
-	var reader : System.IO.TextReader = System.IO.File.OpenText(filename);
+	
+	//var filename : String = "Assets/level" + level + ".dat";
+	//var reader : System.IO.TextReader = System.IO.File.OpenText(filename);
+	
+	//var data : TextAsset = Resources.Load("level" + level + ".dat");
+	var data : TextAsset = Resources.Load("level" + level);
+	var reader : System.IO.TextReader = System.IO.StringReader (data.text);
 	
 	var value : int = -1;
 	//var cols : int = reader.Read();
