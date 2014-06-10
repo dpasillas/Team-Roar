@@ -52,10 +52,10 @@ function ChangeState ( newState : GameState ) {
 			Debug.Log("Game Over");
 			if (unitManager.DidPlayerWin()) {
 				Debug.Log("Player Won!");
-				//Application.LoadLevel("Victory");
+				Application.LoadLevel("Victory");
 			} else {
 				Debug.Log("Game Over... All Units Dead");
-				//Application.LoadLevel("GameOver");
+				Application.LoadLevel("GameOver");
 			}
 			break;
 	}

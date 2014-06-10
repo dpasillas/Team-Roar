@@ -91,8 +91,12 @@ function UpdateAI () {
 	switch (AIState) {
 		case AIStates.EnemyStart:
 			//Debug.Log("EnemyStart");
-			StartCoroutine(MoveAlongPath());
-			AIState = AIStates.EnemyMove;
+			if (path.Count() <= 0) {
+				AIState = AIStates.EnemyShoot;
+			} else {
+				StartCoroutine(MoveAlongPath());
+				AIState = AIStates.EnemyMove;
+			}
 			break;
 			
 		case AIStates.EnemyMove:
