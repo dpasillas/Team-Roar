@@ -90,13 +90,13 @@ function UpdateAI () {
 		tdist = (AIShootTarget.transform.position - transform.position).magnitude;
 	switch (AIState) {
 		case AIStates.EnemyStart:
-			Debug.Log("EnemyStart");
+			//Debug.Log("EnemyStart");
 			StartCoroutine(MoveAlongPath());
 			AIState = AIStates.EnemyMove;
 			break;
 			
 		case AIStates.EnemyMove:
-			Debug.Log("EnemyMove");
+			//Debug.Log("EnemyMove");
 			if (currentTile == AIMoveTarget) {
 				AIState = AIStates.EnemyShoot;
 				canMove = false;
@@ -106,7 +106,7 @@ function UpdateAI () {
 			break;
 			
 		case AIStates.EnemyShoot:
-			Debug.Log("EnemyShoot");
+			//Debug.Log("EnemyShoot");
 			Debug.Log(AIShootTarget);
 			if (!AIShootTarget) {
 				AIState = AIStates.EnemyDone;
@@ -122,7 +122,7 @@ function UpdateAI () {
 			break;
 			
 		case AIStates.EnemyDone:
-			Debug.Log("EnemyDone");
+			//Debug.Log("EnemyDone");
 			AIState = AIStates.EnemyDone;
 			AICntrl = false;
 			break;

@@ -60,7 +60,7 @@ public static function initPropertyList () {
 		switch(type)
 		{
 			case 0: // SCOUT
-				name = "Scouty McScout";
+				name = "McScout";
 				atk = 45;
 				def = 40;
 				dex = 55;
@@ -70,7 +70,7 @@ public static function initPropertyList () {
 				break;
 
 			case 1: // SUPPORT
-				name = "Sir Healsalot";
+				name = "Healsalot";
 				atk = 25;
 				def = 40;
 				dex = 40;
@@ -80,7 +80,7 @@ public static function initPropertyList () {
 				break;
 
 			case 2: // SNIPER
-				name = "Snypen Shout";
+				name = "Snypen";
 				atk = 75;
 				def = 15;
 				dex = 75;
@@ -90,7 +90,7 @@ public static function initPropertyList () {
 				break;
 
 			case 3: // HEAVY
-				name = "Heavy Medals";
+				name = "Heavy";
 				atk = 50;
 				def = 65;
 				dex = 30;

@@ -23,7 +23,6 @@ function Start () {
 }
 
 function Update () {
-	
 	if (gsm.GetState() == GameState.PlayerTurn) {
 		if (unitManager.GameOver()) {
 			gsm.ChangeState(GameState.GameOver);
@@ -126,7 +125,7 @@ function MouseAction() {
 
 function UnitAction() {
 	var mState : MenuState = gsm.GetMenuState();
-	if (Input.GetKeyDown(KeyCode.O)) {	//End Turn Manually
+	if (Input.GetKeyDown(KeyCode.X)) {	//End Turn Manually
 		enemySelect = null;
 		curr.EndAct();
 		curr.Deselect();
@@ -134,7 +133,7 @@ function UnitAction() {
 
 	//if (mState == MenuState.AttackDown && curr.CanAct()) {
 	
-	var attack1 : boolean = Input.GetKeyDown(KeyCode.X);
+	var attack1 : boolean = Input.GetKeyDown(KeyCode.F);
 	var attack2 : boolean = Input.GetKeyDown(KeyCode.G);
 	
 	var attackTriggered : boolean = attack1 || attack2;
@@ -235,48 +234,4 @@ function PaintSquare( point : Vector3 )
 	} else {
 		selectionCube.transform.position = gridPoint;
 	}
-}
-
-var consoleFont : Font;
-var lookaheadBorder : Texture;
-var background : Texture;
-private var numLookahead : int = 6;
-
-function OnGUI () {
-	
-	var height : int = 32; //Screen.height / numLookahead;
-	var width : int = 125;
-	
-	var lhStyle : GUIStyle = GUIStyle(GUIStyle.none);
-	lhStyle.alignment = TextAnchor.MiddleCenter;
-	lhStyle.font = consoleFont;
-	lhStyle.normal.textColor = Color.white;
-	lhStyle.contentOffset = Vector2(0, 3);
-	
-	var lhContent : GUIContent = GUIContent("UnitName");
-	
-	var widthOffset = 50;
-	var bottomOffset = 25;
-	var rightOffset = 25;
-	var heightOffset = 10;
-	
-	var currYPos = Screen.height - (numLookahead * (height + heightOffset)) - bottomOffset;
-	var XPos = Screen.width - width - rightOffset;
-	for (var i = 0; i < numLookahead; ++i) {
-		GUI.DrawTexture(Rect(XPos + 1, currYPos + 1, width - 2, height - 2), background, ScaleMode.StretchToFill, true, 0);
-		GUI.DrawTexture(Rect(XPos, currYPos, width, height), lookaheadBorder, ScaleMode.StretchToFill, true, 0);
-		GUI.Box(Rect(XPos, currYPos, width, height), lhContent, lhStyle);
-		currYPos += height + heightOffset;
-	}
-	
-/*
-	var cStyle : GUIStyle = GUIStyle(GUI.skin.box);
-	cStyle.alignment = TextAnchor.UpperLeft;
-	cStyle.font = consoleFont;
-	cStyle.normal.textColor = Color.cyan; //Color(75, 204, 255, 255);
-
-	var cHeight : int = 50;
-	GUI.Box(Rect(0, Screen.height - cHeight, Screen.width, cHeight), consolePrepend + consoleString  + "\n" + consolePrepend, cStyle);
-	//GUILayout.Label(promptString);
-	*/
 }

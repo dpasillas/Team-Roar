@@ -377,3 +377,94 @@ function Update ()
 	
 	CheckUnitEnded();
 }
+
+
+var consoleFont : Font;
+var playerBackground : Texture;
+var enemyBackground : Texture;
+var keybindBackground : Texture;
+var arrowBackground : Texture;
+
+function OnGUI () {
+	
+	var numLookahead : int = units.Count();
+	var height : int = 32; //Screen.height / numLookahead;
+	var width : int = 125;
+	
+	var lhStyle : GUIStyle = GUIStyle(GUIStyle.none);
+	lhStyle.alignment = TextAnchor.MiddleCenter;
+	lhStyle.font = consoleFont;
+	lhStyle.normal.textColor = Color.white;
+	lhStyle.contentOffset = Vector2(0, 3);
+	
+	var widthOffset = 50;
+	var bottomOffset = 25;
+	var rightOffset = 25;
+	var heightOffset = 10;
+	
+	var currYPos = Screen.height - (numLookahead * (height + heightOffset)) - bottomOffset;
+	var XPos = Screen.width - width - rightOffset;
+	for (var i = numLookahead - 1; i >= 0; --i) {
+		var lhContent : GUIContent = GUIContent(units[i].GetComponent(UnitInfo).unitName);
+		
+		if (units[i].isEnemy)
+			GUI.DrawTexture(Rect(XPos, currYPos, width, height), enemyBackground, ScaleMode.StretchToFill, true, 0);
+		else 
+			GUI.DrawTexture(Rect(XPos, currYPos, width, height), playerBackground, ScaleMode.StretchToFill, true, 0);
+			
+		GUI.Box(Rect(XPos, currYPos, width, height), lhContent, lhStyle);
+		currYPos += height + heightOffset;
+	}
+	
+	var arrowWidth = 32;
+	var arrowHeight = height;
+	var arrowWidthOffset = 10;
+	var arrowPosX = XPos - arrowWidth - arrowWidthOffset;
+	var arrowPosY = currYPos - height - heightOffset;
+	GUI.DrawTexture(Rect(arrowPosX, arrowPosY, arrowWidth, arrowHeight), arrowBackground, ScaleMode.StretchToFill, true, 0);
+	
+	var ac1WordWidth = 115;
+	var ac1WordHeight = height;
+	var ac1WordWidthOffset = 10;
+	var ac1WordPosX = arrowPosX - ac1WordWidth - ac1WordWidthOffset;
+	var ac1WordPosY = arrowPosY;
+	
+	var actionsWidth_1 = 32;
+	var actionsHeight_1 = height;
+	var actionsWidthOffset_1 = 5;
+	var actionsPosX_1 = ac1WordPosX - actionsWidth_1 - actionsWidthOffset_1;
+	var actionsPosY_1 = ac1WordPosY;
+	
+	for (i = 2; i >= 0; --i) {
+		var actName : String;
+		var actKey : String;
+		
+		if (i == 0) actKey = 'F';
+		if (i == 1) actKey = 'G';
+		if (i == 2) actKey = 'X';
+		
+		if (i == 0) actName = 'Attack()';
+		if (i == 1) actName = 'Grenade()';
+		if (i == 2) actName = 'EndTurn()';
+	
+		lhStyle.alignment = TextAnchor.MiddleLeft;
+		GUI.Box(Rect(ac1WordPosX, ac1WordPosY, ac1WordWidth, ac1WordHeight), actName, lhStyle);
+		lhStyle.alignment = TextAnchor.MiddleCenter;
+		GUI.DrawTexture(Rect(actionsPosX_1, actionsPosY_1, actionsWidth_1, actionsHeight_1), keybindBackground, ScaleMode.StretchToFill, true, 0);
+		GUI.Box(Rect(actionsPosX_1, actionsPosY_1, actionsWidth_1, actionsHeight_1), actKey, lhStyle); 
+		
+		ac1WordPosX -= (actionsWidthOffset_1 + actionsWidth_1 + ac1WordWidthOffset + ac1WordWidth);
+		actionsPosX_1 -= (actionsWidthOffset_1 + actionsWidth_1 + ac1WordWidthOffset + ac1WordWidth);
+	}
+	
+	/*
+	var cStyle : GUIStyle = GUIStyle(GUI.skin.box);
+	cStyle.alignment = TextAnchor.UpperLeft;
+	cStyle.font = consoleFont;
+	cStyle.normal.textColor = Color.cyan; //Color(75, 204, 255, 255);
+
+	var cHeight : int = 50;
+	GUI.Box(Rect(0, Screen.height - cHeight, Screen.width, cHeight), consolePrepend + consoleString  + "\n" + consolePrepend, cStyle);
+	//GUILayout.Label(promptString);
+	*/
+}
