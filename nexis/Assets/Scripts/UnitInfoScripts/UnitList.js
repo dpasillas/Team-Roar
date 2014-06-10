@@ -88,11 +88,11 @@ public class UnitList extends MonoBehaviour {
 			finishedMovement = false;
 		}
 		
-		if (Input.GetKeyDown(KeyCode.S))
-			WriteSaveFile();
+//		if (Input.GetKeyDown(KeyCode.S))
+//			WriteSaveFile();
 		
-		if(Input.GetKeyDown(KeyCode.X))
-			propertyListScript.clearPropertyList();
+//		if(Input.GetKeyDown(KeyCode.X))
+//			propertyListScript.clearPropertyList();
 		
 		updateUnitReferences();
 		ShiftLeft();

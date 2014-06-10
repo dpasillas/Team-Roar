@@ -54,9 +54,9 @@ public class StatChangeUnitInfo extends MonoBehaviour {
 	function Update () {
 
 		if(current == this) {
-			// Get exp
-			if(Input.GetKeyDown(KeyCode.L))
-				gainExp();
+//			// Get exp
+//			if(Input.GetKeyDown(KeyCode.L))
+//				gainExp();
 
 			// Increase stat depending on where the selection is
 			if (Input.GetKeyDown(KeyCode.LeftArrow))
