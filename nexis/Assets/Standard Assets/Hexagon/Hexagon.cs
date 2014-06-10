@@ -11,6 +11,7 @@ public class Hexagon : MonoBehaviour {
 	public Material hoverMat;
 	public Material moveMat;
 	public Material selectMat;
+	public Material obstacleMat;
 	public GameObject wallPrefab;
 	public GameObject tilePrefab;
 
@@ -515,20 +516,29 @@ public class Hexagon : MonoBehaviour {
 	public void setWall()
 	{
 		GameObject wall = Instantiate(wallPrefab) as GameObject;
+		Vector3 scale = wall.transform.localScale;
+		scale.y = Mathf.FloorToInt(UnityEngine.Random.Range (1.0f, 3.0f));
+		wall.transform.localScale = scale;
+		//GameObject wall = new GameObject();
+		//wall.renderer.material = selectMat;
 
-		for (int i = 1; i <= 6; ++i) {
+		MeshRenderer[] renderers = wall.GetComponentsInChildren<MeshRenderer>();
+		for (int i = 0; i < renderers.Count(); ++i)
+			renderers[i].material = selectMat;
+
+		for (int i = 0; i < scale.y * 3; ++i) {
 
 
 			GameObject tile = Instantiate (tilePrefab) as GameObject;
 			tile.GetComponent<Hexagon>().enabled = false;
 
 			//Destroy (tile.GetComponent<MeshCollider>());
-			//tile.renderer.material = hoverMat;
+			tile.renderer.material = obstacleMat;
 			tile.transform.position = this.transform.position;
 			tile.transform.rotation = this.transform.rotation;
 
 			Vector3 pos = tile.transform.position;
-			pos.y = i * 0.25f + 0.01f;
+			pos.y = i * 0.50f + 0.01f;
 			tile.transform.position = pos;
 
 		}
