@@ -9,6 +9,8 @@ public var SCOUT_PREFAB : GameObject;
 public var SNIPER_PREFAB : GameObject;
 public var SUPPORT_PREFAB : GameObject;
 public var HEAVY_PREFAB : GameObject;
+
+public var enemy_material : Material;
 /*
 public var EN_SCOUT_PREFAB : GameObject;
 public var EN_SNIPER_PREFAB : GameObject;
@@ -27,26 +29,30 @@ function Start () {
 	//Get reference to grid
 	grid = FindObjectOfType(HexagonGrid);
 	loadFromFile(0);
-	InitPlayerUnits();
-	InitEnemyUnits();
+	//InitPlayerUnits();
+	//InitEnemyUnits();
 	
 	SortUnits();
 	BeginTurn();
 }
 
-function loadFromFile(i : int) {
-	var filename : String = "level" + i + ".txt";
+function loadFromFile(level : int) {
+	var filename : String = "level" + level + ".dat";
 	var reader : System.IO.TextReader = System.IO.File.OpenText(filename);
 	
 	var value : int = -1;
-	var cols : int = reader.Read();
-	var minRows : int = reader.Read();
+	//var cols : int = reader.Read();
+	//var minRows : int = reader.Read();
 	
 	var col : int = 0;
 	var row : int = -1;
 	
 	var obj : GameObject = null;
 	var unit : Unit = null;
+	
+	NUM_UNITS = PlayerPrefs.GetInt("num_units");
+	
+	var i : int = 0;
 	
 	while( true ) {
 		value = reader.Read();
@@ -59,6 +65,21 @@ function loadFromFile(i : int) {
 		var c : char = value;
 		
 		switch(c) {
+			case '1':
+			case '2':
+			case '3':
+			case '4':
+			case '5':
+			case '6':
+			case '7':
+			case '8':
+			case '9':
+			case '0':
+				if(i < NUM_UNITS) {
+					createUnit(getUnitType(i),tile,false,i);
+					i++;
+				}
+				break;
 			case 'o':
 			case 'O':
 				//do nothing.  Tile remains empty
@@ -68,28 +89,20 @@ function loadFromFile(i : int) {
 				tile.setWall();
 				break;
 			case 'c':
-				createUnit(SCOUT_PREFAB,tile,false);
-				break;
 			case 'C':
-				createUnit(SCOUT_PREFAB,tile,true);
+				createUnit(SCOUT_PREFAB,tile,true,-1);
 				break;
 			case 'n':
-				createUnit(SNIPER_PREFAB,tile,false);
-				break;
 			case 'N':
-				createUnit(SNIPER_PREFAB,tile,true);
+				createUnit(SNIPER_PREFAB,tile,true,-1);
 				break;
 			case 'h':
-				createUnit(HEAVY_PREFAB,tile,false);
-				break;
 			case 'H':
-				createUnit(HEAVY_PREFAB,tile,true);
+				createUnit(HEAVY_PREFAB,tile,true,-1);
 				break;
 			case 'u':
-				createUnit(SUPPORT_PREFAB,tile,false);
-				break;
 			case 'U':
-				createUnit(SUPPORT_PREFAB,tile,true);
+				createUnit(SUPPORT_PREFAB,tile,true,-1);
 				break;
 			case '\n':
 				col++;
@@ -98,9 +111,29 @@ function loadFromFile(i : int) {
 			default:;
 		}
 	}
+	
+	NUM_UNITS = Mathf.Min(i, NUM_UNITS);
+	return;
 }
 
-function createUnit(prefab : GameObject, tile : Hexagon, enemy : boolean) {
+function getUnitType(i : int) {
+	var prepend : String = "unit_" + i + "_";
+	var type : int = PlayerPrefs.GetInt(prepend + "type");
+	switch(type) {
+		case 0:
+			return SCOUT_PREFAB;
+		case 1:
+			return SUPPORT_PREFAB;
+		case 2:
+			return SNIPER_PREFAB;
+		case 3:
+			return HEAVY_PREFAB;
+		default:
+			return SCOUT_PREFAB;
+	}
+}
+
+function createUnit(prefab : GameObject, tile : Hexagon, enemy : boolean, i : int) {
 	var obj : GameObject = Instantiate(prefab, tile.transform.position, tile.transform.rotation);
 	var unit : Unit = obj.GetComponent(Unit);
 	
@@ -108,10 +141,18 @@ function createUnit(prefab : GameObject, tile : Hexagon, enemy : boolean) {
 	unit.GetComponent(UnitInfo).speed = Mathf.FloorToInt(Random.Range(0.0, 100.0));
 	
 	if(enemy) {
+		var renderers : Component[] = obj.GetComponentsInChildren(MeshRenderer);
+		
+		Debug.Log("Renderers: " + renderers.Length);
+		for( var renderer : MeshRenderer in renderers)
+			renderer.material = enemy_material;
+		
 		var uinfo : UnitInfo = obj.GetComponent(UnitInfo);
 		uinfo.unitName = "Enemy " + NUM_ENEMIES;
 		
 		NUM_ENEMIES++;
+	} else{
+		unit.GetComponent(UnitInfo).loadUnitStats(i);
 	}
 	
 	units.Add(unit);
@@ -197,6 +238,7 @@ function InitPlayerUnits()
 		unit.InitUnit(grid.Tile(col, row), false);
 		unit.GetComponent(UnitInfo).speed = Mathf.FloorToInt(Random.Range(0.0, 100.0));
 		unit.GetComponent(UnitInfo).loadUnitStats(i);
+		
 		
 		units.Add(unit);
 		

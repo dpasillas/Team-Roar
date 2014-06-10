@@ -10,7 +10,7 @@ public class HexagonGrid : MonoBehaviour {
 	public int minRows = 4;
 	private Hexagon[][] hexagons;
 	public GameObject obstacle;
-	void Start () {
+	void Awake () {
 		hexagons = new Hexagon[columns][];
 		for(int i = 0; i < columns; ++i) 
 			hexagons[i] = new Hexagon[minRows+ i%2];
