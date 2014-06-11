@@ -28,7 +28,7 @@ function Start () {
 
 	//Get reference to grid
 	grid = FindObjectOfType(HexagonGrid);
-	loadFromFile(Mathf.FloorToInt(Random.Range(0.0, 2.0)));
+	loadFromFile(Mathf.FloorToInt(Random.Range(0.0, 2.99)));
 	//InitPlayerUnits();
 	//InitEnemyUnits();
 	
